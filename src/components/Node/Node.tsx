@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { selectConnecting, selectRemoving, removeNode, toggleRemoving, selectNodes, selectAlgorithm } from "../../features/nodes/nodesSlice";
-import type { NodeType } from "../../features/nodes/nodesSlice";
+import { selectConnecting, selectRemoving, removeNode, selectAlgorithm } from "../../features/graph/graphSlice";
+import type { NodeType } from "../../features/graph/graphSlice";
 import './Node.css';
 
 type NodePropsType = {
@@ -36,8 +36,8 @@ const Node = ({ node, color, selected, setSelectedNodes }: NodePropsType) => {
         left: node.x! - 3,
         top: node.y! - 3,
         position: 'absolute',
-        width: '50px',
-        height: '50px',
+        width: '47px',
+        height: '47px',
         backgroundColor: color,
         borderRadius: '50%',
         display: 'flex',

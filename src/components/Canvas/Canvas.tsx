@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './Canvas.css';
-import { addNode, changeAlgorithm, createConnection, NodeType, selectAlgorithm, selectConnecting, selectNodes } from '../../features/nodes/nodesSlice';
+import { addNode, createConnection, NodeType, selectAlgorithm, selectConnecting, selectNodes } from '../../features/graph/graphSlice';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import Node from '../Node/Node';
 import Edge from '../Edge/Edge';
@@ -56,7 +56,7 @@ const Canvas = () => {
         const pos: NodeType = {
             x: ev.clientX - nodeRadius,
             y: ev.clientY - nodeRadius,
-            label: String.fromCharCode(65 + nodes.length),
+            label: "",
             neighbours: []
         }
 
@@ -155,6 +155,7 @@ const Canvas = () => {
                                         from={node}
                                         to={neighbour}
                                         color={edgeOnDPath(node, neighbour) ? 'lime' : 'red'}
+                                        connectedNodes={node.label + neighbour.label}
                                     />
                                 })
                             }

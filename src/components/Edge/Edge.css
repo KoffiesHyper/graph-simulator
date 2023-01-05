@@ -1,16 +1,9 @@
 .edge{
-    animation-name: edge-create;
-    animation-duration: .5;
-    animation-fill-mode: forwards;
-    animation-iteration-count: 1;
+    background-color: red;
+    cursor: pointer;
 }
 
-@keyframes edge-create {
-    0% {
-        
-    }
-
-    100% {
-        transform: scaleX(1);
-    }
+.edge:hover{
+    background-color: white;
+    cursor: pointer;
 }

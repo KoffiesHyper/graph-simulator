@@ -1,11 +1,13 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import counterReducer from '../features/counter/counterSlice';
-import nodesReducer from '../features/nodes/nodesSlice';
+import graphReducer from '../features/graph/graphSlice';
+import menuReducer from '../features/menu/menuSlice';
 
 export const store = configureStore({
   reducer: {
     counter: counterReducer,
-    nodes: nodesReducer
+    graph: graphReducer,
+    menu: menuReducer
   },
 });
 

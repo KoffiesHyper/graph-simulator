@@ -8,20 +8,29 @@ export interface NodeType  {
     neighbours: NodeType[]
 }
 
+export type EdgeType = {
+    connectedNodes: string,
+    weight: number
+}
+
 type AlgorithmType = undefined | 'dijkstra';
 
-export type NodesState = {
+export type GraphStateType = {
     nodes: NodeType[],
     connecting: boolean,
     removing: boolean,
-    algorithm: AlgorithmType
+    algorithm: AlgorithmType,
+    nextNodeLabel: string,
+    edges: EdgeType[]
 }
 
-const initialState: NodesState = {
+const initialState: GraphStateType = {
     nodes: [],
     connecting: false,
     removing: false,
-    algorithm: undefined
+    algorithm: undefined,
+    nextNodeLabel: 'A',
+    edges: []
 }
 
 export const nodesSlice = createSlice({
@@ -31,6 +40,8 @@ export const nodesSlice = createSlice({
     reducers: {
         addNode: (state, action: PayloadAction<NodeType>) => {
             const newNode = action.payload;
+            newNode.label = state.nextNodeLabel;
+            state.nextNodeLabel = String.fromCharCode(state.nextNodeLabel.charCodeAt(0) + 1);
             state.nodes.push(newNode);
         },
         toggleConnecting: (state, action: PayloadAction<boolean>) => {
@@ -45,6 +56,23 @@ export const nodesSlice = createSlice({
                 if (node.label === firstNode.label) { node.neighbours.push(secondNode) }
                 if (node.label === secondNode.label) { node.neighbours.push(firstNode) }
             })
+
+            let newEdgeWeight = {} as EdgeType;
+
+            if (firstNode.label < secondNode.label){
+                newEdgeWeight = {
+                    connectedNodes: firstNode.label + secondNode.label,
+                    weight: 1
+                }
+            }
+            else{
+                newEdgeWeight = {
+                    connectedNodes: secondNode.label + firstNode.label,
+                    weight: 1
+                }
+            }
+
+            state.edges.push(newEdgeWeight);
         },
         removeNode: (state, action: PayloadAction<string>) => {
             state.nodes.forEach((node, i) => {
@@ -54,7 +82,6 @@ export const nodesSlice = createSlice({
                 else {
                     node.neighbours.forEach((neighbour, j) => {
                         if (neighbour.label === action.payload) {
-                            console.log(node.label + ": " + neighbour.label + ' - ' + action.payload)
                             state.nodes[i].neighbours.splice(j, 1);
                         }
                     })
@@ -69,10 +96,10 @@ export const nodesSlice = createSlice({
 
 export const { addNode, toggleConnecting, toggleRemoving, createConnection, removeNode, changeAlgorithm } = nodesSlice.actions;
 
-export const selectNodes = (state: RootState) => state.nodes.nodes;
-export const selectConnecting = (state: RootState) => state.nodes.connecting;
-export const selectRemoving = (state: RootState) => state.nodes.removing;
-export const selectAlgorithm = (state: RootState) => state.nodes.algorithm;
-
+export const selectNodes = (state: RootState) => state.graph.nodes;
+export const selectEdges = (state: RootState) => state.graph.edges;
+export const selectConnecting = (state: RootState) => state.graph.connecting;
+export const selectRemoving = (state: RootState) => state.graph.removing;
+export const selectAlgorithm = (state: RootState) => state.graph.algorithm;
 
 export default nodesSlice.reducer;

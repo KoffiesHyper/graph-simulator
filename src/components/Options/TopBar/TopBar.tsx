@@ -1,7 +1,7 @@
 import React from "react";
 import './TopBar.css';
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { changeAlgorithm, selectConnecting, selectRemoving, selectAlgorithm, toggleConnecting, toggleRemoving } from "../../../features/nodes/nodesSlice";
+import { changeAlgorithm, selectConnecting, selectRemoving, selectAlgorithm, toggleConnecting, toggleRemoving } from "../../../features/graph/graphSlice";
 
 const TopBar = () => {
     const dispatch = useAppDispatch();

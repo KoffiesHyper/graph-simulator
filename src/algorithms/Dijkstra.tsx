@@ -1,4 +1,4 @@
-import { NodeType } from "../features/nodes/nodesSlice";
+import { NodeType } from "../features/graph/graphSlice";
 
 interface DijkstraNodeType extends NodeType {
     previous: NodeType | undefined,
