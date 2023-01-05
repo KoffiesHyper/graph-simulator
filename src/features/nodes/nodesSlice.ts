@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 
-export type NodeType = {
+export interface NodeType  {
     x: number | undefined,
     y: number | undefined,
     label: string,

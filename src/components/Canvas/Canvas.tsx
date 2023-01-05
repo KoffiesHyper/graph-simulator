@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import './Canvas.css';
-import { addNode, changeAlgorithm, createConnection, NodeType, selectAlgorithm, selectConnecting, selectNodes, toggleConnecting } from '../../features/nodes/nodesSlice';
+import { addNode, changeAlgorithm, createConnection, NodeType, selectAlgorithm, selectConnecting, selectNodes } from '../../features/nodes/nodesSlice';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import Node from '../Node/Node';
 import Edge from '../Edge/Edge';
-import applyDijkstra from '../../algorithms/algorithms';
+import applyDijkstra from '../../algorithms/Dijkstra';
 
 const Canvas = () => {
     const [selectedNodes, setSelectedNodes] = useState([] as NodeType[]);
@@ -27,7 +27,6 @@ const Canvas = () => {
             const graph = applyDijkstra(selectedNodes[0], selectedNodes[1], nodes);
             extractPath(graph, selectedNodes[1]);
             setSelectedNodes([]);
-            dispatch(changeAlgorithm(undefined));
         }
     }, [selectedNodes]);
 
@@ -50,7 +49,7 @@ const Canvas = () => {
 
             dispatch(createConnection(connection));
             setSelectedNodes([]);
-        }, 500);
+        }, 100);
     }
 
     const handleClick = (ev: any) => {
@@ -134,8 +133,8 @@ const Canvas = () => {
         <>
             {
                 nodes.map(node => {
-                    const color = (isSelected(node) || nodeOnDPath(node)) ? 'lime' : 'red';
-                    return <Node node={node} color={color} setSelectedNodes={setSelectedNodes} />
+                    const color = nodeOnDPath(node) ? 'lime' : 'red';
+                    return <Node node={node} color={color} selected={isSelected(node)} setSelectedNodes={setSelectedNodes} />
                 })
             }
         </>

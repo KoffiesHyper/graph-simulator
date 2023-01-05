@@ -6,11 +6,12 @@ import './Node.css';
 
 type NodePropsType = {
     node: NodeType,
-    color: string
+    color: string,
+    selected: boolean,
     setSelectedNodes: React.Dispatch<React.SetStateAction<NodeType[]>>
 }
 
-const Node = ({ node, color, setSelectedNodes }: NodePropsType) => {
+const Node = ({ node, color, selected, setSelectedNodes }: NodePropsType) => {
     const dispatch = useAppDispatch();
 
     const connecting = useAppSelector(selectConnecting);
@@ -24,7 +25,6 @@ const Node = ({ node, color, setSelectedNodes }: NodePropsType) => {
 
         if (removing) {
             dispatch(removeNode(node.label));
-            dispatch(toggleRemoving(false));
         }
 
         if (algorithm === 'dijkstra'){
@@ -33,8 +33,8 @@ const Node = ({ node, color, setSelectedNodes }: NodePropsType) => {
     }
 
     const nodeStyle: React.CSSProperties = {
-        left: node.x,
-        top: node.y,
+        left: node.x! - 3,
+        top: node.y! - 3,
         position: 'absolute',
         width: '50px',
         height: '50px',
@@ -44,7 +44,7 @@ const Node = ({ node, color, setSelectedNodes }: NodePropsType) => {
         justifyContent: 'center',
         alignItems: 'center',
         zIndex: 10,
-        boxShadow: `0 10px 10px 0 rgba(255, 0, 0, 0.2), 0 10px 10px 0 rgba(255, 0, 0, 0.19)`
+        border: selected ? "3px solid white" : `3px solid ${color}`
     };
 
     return (
