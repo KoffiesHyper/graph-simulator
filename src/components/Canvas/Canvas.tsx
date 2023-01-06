@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './Canvas.css';
-import { addNode, createConnection, NodeType, selectAlgorithm, selectConnecting, selectNodes } from '../../features/graph/graphSlice';
+import { addNode, createConnection, NodeType, selectAddingNode, selectAlgorithm, selectConnecting, selectEdges, selectNodes } from '../../features/graph/graphSlice';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import Node from '../Node/Node';
 import Edge from '../Edge/Edge';
@@ -11,8 +11,14 @@ const Canvas = () => {
 
     const [dPath, setDPath] = useState<any[]>([]);
 
+
+    const nodes = useAppSelector(selectNodes);
+    const edges = useAppSelector(selectEdges);
+    const addingNode = useAppSelector(selectAddingNode);
     const connecting = useAppSelector(selectConnecting);
     const algorithm = useAppSelector(selectAlgorithm);
+
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
         window.addEventListener('mouseclick', handleClick);
@@ -24,14 +30,16 @@ const Canvas = () => {
         }
 
         if (selectedNodes.length === 2 && algorithm === 'dijkstra') {
-            const graph = applyDijkstra(selectedNodes[0], selectedNodes[1], nodes);
+            const graph = applyDijkstra(selectedNodes[0], selectedNodes[1], nodes, edges);
+            console.log(graph)
             extractPath(graph, selectedNodes[1]);
             setSelectedNodes([]);
         }
     }, [selectedNodes]);
 
-    const nodes = useAppSelector(selectNodes);
-    const dispatch = useAppDispatch();
+    useEffect(() => {
+        if (algorithm !== 'dijkstra') setDPath([]);
+    }, [algorithm]);
 
     const nodeRadius = 25;
 
@@ -53,6 +61,8 @@ const Canvas = () => {
     }
 
     const handleClick = (ev: any) => {
+        if (!addingNode) return;
+
         const pos: NodeType = {
             x: ev.clientX - nodeRadius,
             y: ev.clientY - nodeRadius,
@@ -103,27 +113,27 @@ const Canvas = () => {
 
     const nodeOnDPath = (node: NodeType) => {
         for (let i = 0; i < dPath.length; i++) {
-            if(node.label === dPath[i]){
+            if (node.label === dPath[i]) {
                 return true;
             }
         }
 
-       return false;
+        return false;
     }
 
     const edgeOnDPath = (node1: NodeType, node2: NodeType) => {
         for (let i = 0; i < dPath.length; i++) {
-            if(node1.label === dPath[i]){
-                if((i > 0 && dPath[i-1] === node2.label) || (i < dPath.length-1 && dPath[i+1] === node2.label)) return true;
+            if (node1.label === dPath[i]) {
+                if ((i > 0 && dPath[i - 1] === node2.label) || (i < dPath.length - 1 && dPath[i + 1] === node2.label)) return true;
             }
         }
 
-       return false;
+        return false;
     }
 
     const isSelected = (node: NodeType) => {
         for (let i = 0; i < selectedNodes.length; i++) {
-            if(selectedNodes[i].label === node.label) return true;            
+            if (selectedNodes[i].label === node.label) return true;
         }
 
         return false;
@@ -133,7 +143,7 @@ const Canvas = () => {
         <>
             {
                 nodes.map(node => {
-                    const color = nodeOnDPath(node) ? 'lime' : 'red';
+                    const color = nodeOnDPath(node) ? 'rgb(0, 255, 0)' : 'rgb(255, 0, 0)';
                     return <Node node={node} color={color} selected={isSelected(node)} setSelectedNodes={setSelectedNodes} />
                 })
             }
@@ -154,7 +164,7 @@ const Canvas = () => {
                                     return <Edge
                                         from={node}
                                         to={neighbour}
-                                        color={edgeOnDPath(node, neighbour) ? 'lime' : 'red'}
+                                        color={edgeOnDPath(node, neighbour) ? 'rgb(0, 255, 0)' : 'rgb(255, 0, 0)'}
                                         connectedNodes={node.label + neighbour.label}
                                     />
                                 })

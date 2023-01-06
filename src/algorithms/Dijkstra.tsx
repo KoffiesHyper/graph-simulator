@@ -1,4 +1,5 @@
-import { NodeType } from "../features/graph/graphSlice";
+import Edge from "../components/Edge/Edge";
+import { EdgeType, NodeType } from "../features/graph/graphSlice";
 
 interface DijkstraNodeType extends NodeType {
     previous: NodeType | undefined,
@@ -11,7 +12,7 @@ let visited = [] as NodeType[];
 
 let startLabel = '';
 
-const applyDijkstra = (start: NodeType, finish: NodeType, nodes: NodeType[]) => {
+const applyDijkstra = (start: NodeType, finish: NodeType, nodes: NodeType[], edges: EdgeType[]) => {
     graph = [];
     stack = [];
     visited = [];
@@ -25,13 +26,10 @@ const applyDijkstra = (start: NodeType, finish: NodeType, nodes: NodeType[]) => 
     while (stack.length > 0) {
         for (let i = 0; i < stack.length; i++) {
 
-            if (isVisited(stack[i])) continue;
-
             for (let j = 0; j < stack[i].neighbours.length; j++) {
-                if (isVisited(stack[i].neighbours[j])) continue;
-
-                if (getDist(stack[i].label) + 1 < getDist(stack[i].neighbours[j].label)) {
-                    setPrev(stack[i].neighbours[j].label, stack[i]);
+                if (getDist(stack[i].label) + parseInt(getWeight(stack[i].label, stack[i].neighbours[j].label, edges).toString()) < getDist(stack[i].neighbours[j].label)) {
+                    setPrev(stack[i].neighbours[j].label, stack[i], edges);
+                    if (visited.find(e => e.label === stack[i].neighbours[j].label)) stack.push(getNodeWithLabel(stack[i].neighbours[j].label)!)
                 }
             }
 
@@ -52,6 +50,14 @@ const applyDijkstra = (start: NodeType, finish: NodeType, nodes: NodeType[]) => 
     }
 
     return graph;
+}
+
+const getWeight = (nodeLabel: string, neighbourLabel: string, edges: EdgeType[]): number => {
+    const connectedNodes = (nodeLabel < neighbourLabel) ? nodeLabel + neighbourLabel : neighbourLabel + nodeLabel;
+
+    const weight = edges.find(edge => edge.connectedNodes === connectedNodes)?.weight;
+
+    if (weight) return weight; else return 0;
 }
 
 const pushNodeToGraph = (node: NodeType) => {
@@ -80,10 +86,10 @@ const getDist = (label: string) => {
     return 0;
 }
 
-const setPrev = (label: string, prev: NodeType) => {
+const setPrev = (label: string, prev: NodeType, edges: EdgeType[]) => {
     for (let i = 0; i < graph.length; i++) {
         if (graph[i].label === label) {
-            graph[i].dist = getDist(prev.label) + 1;
+            graph[i].dist = getDist(prev.label) + parseInt(getWeight(label, prev.label, edges).toString());
             graph[i].previous = prev
         }
     }

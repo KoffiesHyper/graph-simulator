@@ -1,10 +1,11 @@
 .topbar{
     width: 100vw;
-    height: 10vh;
+    height: 8vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: rgb(30, 30, 30);
+    background-color: rgb(60, 60, 60);
+    min-height: 50px;
 }
 
 .topbar button{
@@ -15,5 +16,4 @@
     outline: none;
     border-radius: 3px;
     margin-inline: 20px;
-    box-shadow: 0 10px 10px 0 rgba(255, 0, 0, 0.2), 0 10px 10px 0 rgba(255, 0, 0, 0.19);
 }

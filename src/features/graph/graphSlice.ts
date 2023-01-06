@@ -17,6 +17,7 @@ type AlgorithmType = undefined | 'dijkstra';
 
 export type GraphStateType = {
     nodes: NodeType[],
+    addingNode: boolean,
     connecting: boolean,
     removing: boolean,
     algorithm: AlgorithmType,
@@ -26,6 +27,7 @@ export type GraphStateType = {
 
 const initialState: GraphStateType = {
     nodes: [],
+    addingNode: false,
     connecting: false,
     removing: false,
     algorithm: undefined,
@@ -44,6 +46,9 @@ export const nodesSlice = createSlice({
             state.nextNodeLabel = String.fromCharCode(state.nextNodeLabel.charCodeAt(0) + 1);
             state.nodes.push(newNode);
         },
+        toggleAddNode: (state, action: PayloadAction<boolean>) => {
+            state.addingNode = action.payload;
+        },
         toggleConnecting: (state, action: PayloadAction<boolean>) => {
             state.connecting = action.payload;
         },
@@ -53,8 +58,8 @@ export const nodesSlice = createSlice({
         createConnection: (state, action: PayloadAction<{ firstNode: NodeType, secondNode: NodeType }>) => {
             const { firstNode, secondNode } = action.payload;
             state.nodes.forEach(node => {
-                if (node.label === firstNode.label) { node.neighbours.push(secondNode) }
-                if (node.label === secondNode.label) { node.neighbours.push(firstNode) }
+                if (node.label === firstNode.label && node.neighbours.findIndex(e => e.label === secondNode.label) === -1) { node.neighbours.push(secondNode) }
+                if (node.label === secondNode.label && node.neighbours.findIndex(e => e.label === firstNode.label) === -1) { node.neighbours.push(firstNode) }
             })
 
             let newEdgeWeight = {} as EdgeType;
@@ -90,14 +95,19 @@ export const nodesSlice = createSlice({
         },
         changeAlgorithm: (state, action: PayloadAction<AlgorithmType>) => {
             state.algorithm = action.payload;
+        },
+        updateEdgeWeight: (state, action: PayloadAction<EdgeType>) => {
+            const index = state.edges.findIndex(e => e.connectedNodes === action.payload.connectedNodes);
+            state.edges[index] = action.payload;
         }
     }
 });
 
-export const { addNode, toggleConnecting, toggleRemoving, createConnection, removeNode, changeAlgorithm } = nodesSlice.actions;
+export const { addNode, toggleAddNode, toggleConnecting, toggleRemoving, createConnection, removeNode, changeAlgorithm, updateEdgeWeight } = nodesSlice.actions;
 
 export const selectNodes = (state: RootState) => state.graph.nodes;
 export const selectEdges = (state: RootState) => state.graph.edges;
+export const selectAddingNode = (state: RootState) => state.graph.addingNode;
 export const selectConnecting = (state: RootState) => state.graph.connecting;
 export const selectRemoving = (state: RootState) => state.graph.removing;
 export const selectAlgorithm = (state: RootState) => state.graph.algorithm;

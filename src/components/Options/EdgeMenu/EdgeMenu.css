@@ -1,21 +1,49 @@
 .edge-menu {
-    background-color: rgb(30, 30, 30);
-    ;
+    background-color: rgb(60, 60, 60);
     position: absolute;
     left: 20px;
-    top: 25vh;
-    width: 10vw;
-    height: 50vh;
+    top: 40vh;
+    width: 12vw;
+    height: 20vh;
+    min-width: 200px;
     border-radius: 3px;
-    color: white
+    color: white;
+    display: grid;
+    grid-template-rows: 3fr 1fr 4fr;
+    justify-items: flex-start;
+    align-items: flex-start;
 }
 
 .edge-menu h1 {
-    font-size: 2rem;
+    font-size: 1.5rem;
+    margin: 10px;
+    justify-self: center;
+    font-weight: lighter;
+}
+
+.edge-menu h2 {
+    font-size: 1rem;
+    margin: 0px;
+    font-weight: lighter;
+}
+
+.edge-menu h3 {
+    font-size: .75rem;
+    margin: 0px;
+    padding-inline: 10px;
+}
+
+.edge-menu .weight {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 100%;
 }
 
 input[type='number'] {
     outline: none;
     border: none;
     border-radius: 3px;
+    width: 100%;
+    margin-right: 10px;
 }

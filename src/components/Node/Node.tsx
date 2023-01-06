@@ -32,6 +32,8 @@ const Node = ({ node, color, selected, setSelectedNodes }: NodePropsType) => {
         }
     }
 
+    const shadowColor = `rgba(${color.substring(4, color.length-1)}, 0.2)`;
+
     const nodeStyle: React.CSSProperties = {
         left: node.x! - 3,
         top: node.y! - 3,
@@ -44,7 +46,8 @@ const Node = ({ node, color, selected, setSelectedNodes }: NodePropsType) => {
         justifyContent: 'center',
         alignItems: 'center',
         zIndex: 10,
-        border: selected ? "3px solid white" : `3px solid ${color}`
+        border: selected ? "3px solid white" : `3px solid ${color}`,
+        boxShadow: `0 4px 8px 0 ${shadowColor}, 0 6px 20px 0 ${shadowColor}`
     };
 
     return (

@@ -7,3 +7,12 @@
     background-color: white;
     cursor: pointer;
 }
+
+.edge p{
+    color: white;
+    background-color: red;
+    border-radius: 3px;
+    text-align: center;
+    width: 20px;
+    height: 20px;
+}
