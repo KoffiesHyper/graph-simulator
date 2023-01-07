@@ -92,6 +92,14 @@ export const nodesSlice = createSlice({
                     })
                 }
             })
+
+            state.edges.forEach((edge, i) => {
+                if(edge.connectedNodes.split("").includes(action.payload)) {
+                    state.edges[i].connectedNodes = "deleted"
+                }
+            })
+
+            state.edges = state.edges.filter(edge => edge.connectedNodes !== "deleted")
         },
         changeAlgorithm: (state, action: PayloadAction<AlgorithmType>) => {
             state.algorithm = action.payload;

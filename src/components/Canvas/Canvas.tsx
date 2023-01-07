@@ -5,12 +5,12 @@ import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import Node from '../Node/Node';
 import Edge from '../Edge/Edge';
 import applyDijkstra from '../../algorithms/Dijkstra';
+import { isConnected } from '../../algorithms/DepthFirstSearch';
 
 const Canvas = () => {
     const [selectedNodes, setSelectedNodes] = useState([] as NodeType[]);
 
     const [dPath, setDPath] = useState<any[]>([]);
-
 
     const nodes = useAppSelector(selectNodes);
     const edges = useAppSelector(selectEdges);

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { selectConnecting, selectRemoving, removeNode, selectAlgorithm } from "../../features/graph/graphSlice";
+import { selectConnecting, selectRemoving, removeNode, selectAlgorithm, selectEdges } from "../../features/graph/graphSlice";
 import type { NodeType } from "../../features/graph/graphSlice";
 import './Node.css';
 
@@ -17,6 +17,7 @@ const Node = ({ node, color, selected, setSelectedNodes }: NodePropsType) => {
     const connecting = useAppSelector(selectConnecting);
     const removing = useAppSelector(selectRemoving);
     const algorithm = useAppSelector(selectAlgorithm);
+    const edges = useAppSelector(selectEdges);
 
     const handleClick = (ev: any) => {
         if (connecting) {
