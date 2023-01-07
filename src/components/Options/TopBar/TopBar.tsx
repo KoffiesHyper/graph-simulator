@@ -43,6 +43,11 @@ const TopBar = () => {
         dispatch(changeAlgorithm('kruskal'));
     }
 
+    const handleLongestPathClick = (ev: any) => {
+        disableAllActions();
+        dispatch(changeAlgorithm('longest_path'));
+    }
+
     return (
         <div className='topbar'>
             <button style={{ backgroundColor: addingNode ? 'lime' : 'red' }} onClick={handleAddNodeClick}>{addingNode ? 'Adding Node' : 'Add Node'}</button>
@@ -50,6 +55,7 @@ const TopBar = () => {
             <button style={{ backgroundColor: removing ? 'lime' : 'red' }} onClick={handleRemoveClick}>{removing ? 'Removing' : 'Remove'}</button>
             <button style={{ backgroundColor: (algorithm === 'dijkstra') ? 'lime' : 'red' }} onClick={handleDijkstraClick}>{(algorithm === 'dijkstra') ? 'Applying Dijkstra' : 'Dijkstra'}</button>
             <button style={{ backgroundColor: (algorithm === 'kruskal') ? 'lime' : 'red' }} onClick={handleKruskalClick}>{(algorithm === 'kruskal') ? 'Applying Kruskal' : 'Kruskal'}</button>
+            <button style={{ backgroundColor: (algorithm === 'longest_path') ? 'lime' : 'red' }} onClick={handleLongestPathClick}>{(algorithm === 'longest_path') ? 'Applying Longest Path' : 'Longest Path'}</button>
         </div>
     );
 }

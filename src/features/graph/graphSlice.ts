@@ -13,7 +13,7 @@ export type EdgeType = {
     weight: number
 }
 
-type AlgorithmType = undefined | 'dijkstra' | 'kruskal';
+type AlgorithmType = undefined | 'dijkstra' | 'kruskal' | 'longest_path';
 
 export type GraphStateType = {
     nodes: NodeType[],

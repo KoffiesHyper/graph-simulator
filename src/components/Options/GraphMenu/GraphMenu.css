@@ -11,7 +11,7 @@
     justify-items: flex-start;
     align-items: flex-start;
     border: 1px solid rgb(40, 40, 40);
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1), 0 3px 20px 0 rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1), 0 0px 0px 0 rgba(0, 0, 0, 0.1);
 }
 
 .graph-menu h1 {
@@ -31,23 +31,65 @@
     font-weight: lighter;
 }
 
-.graph-menu .property {
-    width: 100%;
-}
-
-.graph-menu .weight {
-    display: flex;
-    justify-content: flex-start;
-}
-
-.graph-menu input {
-    padding-inline: 20px;
-}
-
 .graph-menu p {
     font-size: .8rem;
     margin: 0px;
     padding: 10px;
+    font-weight: bold;
+}
+
+.graph-menu .property {
+    width: 100%;
+    border-bottom: 1px solid rgb(40, 40, 40);
+}
+
+.graph-menu .weight-setting {
+    width: 100%;
+    border-bottom: 1px solid rgb(40, 40, 40);
+    padding-block: 5px;
+}
+
+.graph-menu .radio {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.graph-menu .radio p {
+    padding-left: 5px;
+}
+
+.radio input[type='radio'] {
+    appearance: none;
+    border: 3px solid rgb(120, 120, 120);
+    border-radius: 50%;
+    height: 1rem;
+    width: 1rem;
+    margin-bottom: 2px;
+    margin-left: 10px;
+}
+
+.radio input[type='radio']:checked {
+    background-color: rgb(255, 0, 0);
+}
+
+.graph-menu .degree-setting {
+    padding-block: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.graph-menu .degree-setting button {
+    padding: 10px;
+    background-color: red;
+    color: white;
+    border: none;
+    outline: none;
+    border-radius: 30px;
+    padding-inline: 15px;
+    cursor: pointer;
     font-weight: bold;
 }
 

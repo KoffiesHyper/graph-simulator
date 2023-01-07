@@ -8,6 +8,7 @@ import applyDijkstra from '../../algorithms/Dijkstra';
 import { isConnected } from '../../algorithms/DepthFirstSearch';
 import applyKruskal from '../../algorithms/Kruskal';
 import { focusEdge } from '../../features/menu/menuSlice';
+import applyLongestPath from '../../algorithms/LongestPath';
 
 const Canvas = () => {
     const nodes = useAppSelector(selectNodes);
@@ -19,7 +20,7 @@ const Canvas = () => {
     const dispatch = useAppDispatch();
 
     const [selectedNodes, setSelectedNodes] = useState([] as NodeType[]);
-    const [dPath, setDPath] = useState<any[]>([]);
+    const [path, setPath] = useState<any[]>([]);
     const [kruskalMST, setKruskalMST] = useState<EdgeType[]>([]);
 
     useEffect(() => {
@@ -33,14 +34,19 @@ const Canvas = () => {
 
         if (selectedNodes.length === 2 && algorithm === 'dijkstra') {
             const graph = applyDijkstra(selectedNodes[0], selectedNodes[1], nodes, edges);
-            console.log(graph)
+            extractPath(graph, selectedNodes[1]);
+            setSelectedNodes([]);
+        }
+
+        if (selectedNodes.length === 2 && algorithm === 'longest_path') {
+            const graph = applyLongestPath(selectedNodes[0], selectedNodes[1], nodes, edges);
             extractPath(graph, selectedNodes[1]);
             setSelectedNodes([]);
         }
     }, [selectedNodes]);
 
     useEffect(() => {
-        if (algorithm !== 'dijkstra') setDPath([]);
+        if (algorithm !== 'dijkstra') setPath([]);
         if (algorithm !== 'kruskal') setKruskalMST([]);
         
         if (algorithm === 'kruskal') getKruskal();
@@ -111,7 +117,7 @@ const Canvas = () => {
             if (graph[x].previous)
                 currentLabel = graph[x].previous.label;
             else {
-                setDPath(path);
+                setPath(path);
                 return;
             }
         }
@@ -128,9 +134,9 @@ const Canvas = () => {
         return on;
     }
 
-    const nodeOnDPath = (node: NodeType) => {
-        for (let i = 0; i < dPath.length; i++) {
-            if (node.label === dPath[i]) {
+    const nodeOnPath = (node: NodeType) => {
+        for (let i = 0; i < path.length; i++) {
+            if (node.label === path[i]) {
                 return true;
             }
         }
@@ -138,10 +144,10 @@ const Canvas = () => {
         return false;
     }
 
-    const edgeOnDPath = (node1: NodeType, node2: NodeType) => {
-        for (let i = 0; i < dPath.length; i++) {
-            if (node1.label === dPath[i]) {
-                if ((i > 0 && dPath[i - 1] === node2.label) || (i < dPath.length - 1 && dPath[i + 1] === node2.label)) return true;
+    const edgeOnPath = (node1: NodeType, node2: NodeType) => {
+        for (let i = 0; i < path.length; i++) {
+            if (node1.label === path[i]) {
+                if ((i > 0 && path[i - 1] === node2.label) || (i < path.length - 1 && path[i + 1] === node2.label)) return true;
             }
         }
 
@@ -170,7 +176,7 @@ const Canvas = () => {
         <>
             {
                 nodes.map(node => {
-                    const color = nodeOnDPath(node) ? 'rgb(0, 255, 0)' : 'rgb(255, 0, 0)';
+                    const color = nodeOnPath(node) ? 'rgb(0, 255, 0)' : 'rgb(255, 0, 0)';
                     return <Node key={node.label} node={node} color={color} selected={isSelected(node)} setSelectedNodes={setSelectedNodes} />
                 })
             }
@@ -191,7 +197,7 @@ const Canvas = () => {
                                     return <Edge
                                         from={node}
                                         to={neighbour}
-                                        color={edgeOnDPath(node, neighbour) || edgeOnKruskal(node.label + neighbour.label) ? 'rgb(0, 255, 0)' : 'rgb(255, 0, 0)'}
+                                        color={edgeOnPath(node, neighbour) || edgeOnKruskal(node.label + neighbour.label) ? 'rgb(0, 255, 0)' : 'rgb(255, 0, 0)'}
                                         connectedNodes={node.label + neighbour.label}
                                         key={node.label + neighbour.label}
                                     />

@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectConnecting, selectRemoving, removeNode, selectAlgorithm, selectEdges, selectNodes } from "../../features/graph/graphSlice";
 import type { NodeType } from "../../features/graph/graphSlice";
 import './Node.css';
+import { selectDegrees } from "../../features/menu/menuSlice";
 
 type NodePropsType = {
     node: NodeType,
@@ -17,6 +18,7 @@ const Node = ({ node, color, selected, setSelectedNodes }: NodePropsType) => {
     const connecting = useAppSelector(selectConnecting);
     const removing = useAppSelector(selectRemoving);
     const algorithm = useAppSelector(selectAlgorithm);
+    const showDegrees = useAppSelector(selectDegrees);
     // const edges = useAppSelector(selectEdges);
     // const nodes = useAppSelector(selectNodes);
 
@@ -29,12 +31,12 @@ const Node = ({ node, color, selected, setSelectedNodes }: NodePropsType) => {
             dispatch(removeNode(node.label));
         }
 
-        if (algorithm === 'dijkstra'){
+        if (algorithm === 'dijkstra' || algorithm === 'longest_path') {
             setSelectedNodes(nodes => [...nodes, node]);
         }
     }
 
-    const shadowColor = `rgba(${color.substring(4, color.length-1)}, 0.2)`;
+    const shadowColor = `rgba(${color.substring(4, color.length - 1)}, 0.2)`;
 
     const nodeStyle: React.CSSProperties = {
         left: node.x! - 3,
@@ -55,6 +57,7 @@ const Node = ({ node, color, selected, setSelectedNodes }: NodePropsType) => {
     return (
         <div className='node' style={nodeStyle} onClick={handleClick}>
             <p style={{ fontSize: 20, color: 'white', fontWeight: 'bold' }}>{node.label}</p>
+            {showDegrees && <p className="degree">{node.neighbours.length}</p>}
         </div>
     );
 }
