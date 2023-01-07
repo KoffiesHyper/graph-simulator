@@ -1,17 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import './Canvas.css';
-import { addNode, createConnection, NodeType, selectAddingNode, selectAlgorithm, selectConnecting, selectEdges, selectNodes } from '../../features/graph/graphSlice';
+import { addNode, createConnection, EdgeType, NodeType, selectAddingNode, selectAlgorithm, selectConnecting, selectEdges, selectNodes } from '../../features/graph/graphSlice';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import Node from '../Node/Node';
 import Edge from '../Edge/Edge';
 import applyDijkstra from '../../algorithms/Dijkstra';
 import { isConnected } from '../../algorithms/DepthFirstSearch';
+import applyKruskal from '../../algorithms/Kruskal';
 
 const Canvas = () => {
-    const [selectedNodes, setSelectedNodes] = useState([] as NodeType[]);
-
-    const [dPath, setDPath] = useState<any[]>([]);
-
     const nodes = useAppSelector(selectNodes);
     const edges = useAppSelector(selectEdges);
     const addingNode = useAppSelector(selectAddingNode);
@@ -19,6 +16,10 @@ const Canvas = () => {
     const algorithm = useAppSelector(selectAlgorithm);
 
     const dispatch = useAppDispatch();
+
+    const [selectedNodes, setSelectedNodes] = useState([] as NodeType[]);
+    const [dPath, setDPath] = useState<any[]>([]);
+    const [kruskalMST, setKruskalMST] = useState<EdgeType[]>([]);
 
     useEffect(() => {
         window.addEventListener('mouseclick', handleClick);
@@ -40,6 +41,12 @@ const Canvas = () => {
     useEffect(() => {
         if (algorithm !== 'dijkstra') setDPath([]);
     }, [algorithm]);
+
+    useEffect(() => {
+        const MST = applyKruskal(nodes, edges);
+        if(MST)
+            setKruskalMST(MST);
+    }, [nodes, edges]);
 
     const nodeRadius = 25;
 
@@ -131,6 +138,11 @@ const Canvas = () => {
         return false;
     }
 
+    const edgeOnKruskal = (edge: string) => {
+        if (kruskalMST?.find(e => e.connectedNodes === edge)) return true;
+        return false;
+    }
+
     const isSelected = (node: NodeType) => {
         for (let i = 0; i < selectedNodes.length; i++) {
             if (selectedNodes[i].label === node.label) return true;
@@ -144,7 +156,7 @@ const Canvas = () => {
             {
                 nodes.map(node => {
                     const color = nodeOnDPath(node) ? 'rgb(0, 255, 0)' : 'rgb(255, 0, 0)';
-                    return <Node node={node} color={color} selected={isSelected(node)} setSelectedNodes={setSelectedNodes} />
+                    return <Node key={node.label} node={node} color={color} selected={isSelected(node)} setSelectedNodes={setSelectedNodes} />
                 })
             }
         </>
@@ -164,8 +176,9 @@ const Canvas = () => {
                                     return <Edge
                                         from={node}
                                         to={neighbour}
-                                        color={edgeOnDPath(node, neighbour) ? 'rgb(0, 255, 0)' : 'rgb(255, 0, 0)'}
+                                        color={edgeOnDPath(node, neighbour) || edgeOnKruskal(node.label + neighbour.label) ? 'rgb(0, 255, 0)' : 'rgb(255, 0, 0)'}
                                         connectedNodes={node.label + neighbour.label}
+                                        key={node.label + neighbour.label}
                                     />
                                 })
                             }
