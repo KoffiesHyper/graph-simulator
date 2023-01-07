@@ -2,7 +2,7 @@ import React from "react";
 import './Edge.css';
 import { NodeType, selectEdges } from "../../features/graph/graphSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { focusEdge } from "../../features/menu/menuSlice";
+import { focusEdge, selectWeighted } from "../../features/menu/menuSlice";
 
 type EdgePropsType = {
     from: NodeType,
@@ -14,6 +14,7 @@ type EdgePropsType = {
 const Edge = ({ from, to, color, connectedNodes }: EdgePropsType) => {
 
     const edges = useAppSelector(selectEdges);
+    const weighted = useAppSelector(selectWeighted);
     const dispatch = useAppDispatch();
 
     const width = Math.sqrt(Math.pow(from.x! - to.x!, 2) + Math.pow(from.y! - to.y!, 2));
@@ -24,7 +25,7 @@ const Edge = ({ from, to, color, connectedNodes }: EdgePropsType) => {
     const m = deltaY / deltaX;
     const angle = Math.atan(m);
 
-    const shadowColor = `rgba(${color!.substring(4, color!.length-1)}, 0.2)`;
+    const shadowColor = `rgba(${color!.substring(4, color!.length - 1)}, 0.2)`;
 
     const styles: React.CSSProperties = {
         width: width,
@@ -54,7 +55,7 @@ const Edge = ({ from, to, color, connectedNodes }: EdgePropsType) => {
 
     return (
         <div className="edge" style={styles} onClick={handleClick}>
-            <p style={{backgroundColor: 'rgb(80, 80, 80)', fontWeight: 'bold'}}>{getWeight()}</p>
+            {weighted && <p style={{ backgroundColor: 'rgb(80, 80, 80)', fontWeight: 'bold' }}>{getWeight()}</p>}
         </div>
     );
 }

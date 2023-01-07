@@ -4,6 +4,7 @@ import { selectEdgeMenu } from "../../features/menu/menuSlice";
 import EdgeMenu from "./EdgeMenu/EdgeMenu";
 import './Options.css';
 import TopBar from "./TopBar/TopBar";
+import GraphMenu from "./GraphMenu/GraphMenu";
 
 const Options = () => {
 
@@ -13,6 +14,7 @@ const Options = () => {
         <div className="options-container">
             <TopBar />
             { edgeMenu && <EdgeMenu /> }
+            <GraphMenu />
         </div>
     )
 }

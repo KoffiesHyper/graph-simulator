@@ -38,12 +38,18 @@ const TopBar = () => {
         dispatch(changeAlgorithm('dijkstra'));
     }
 
+    const handleKruskalClick = (ev: any) => {
+        disableAllActions();
+        dispatch(changeAlgorithm('kruskal'));
+    }
+
     return (
         <div className='topbar'>
             <button style={{ backgroundColor: addingNode ? 'lime' : 'red' }} onClick={handleAddNodeClick}>{addingNode ? 'Adding Node' : 'Add Node'}</button>
             <button style={{ backgroundColor: connecting ? 'lime' : 'red' }} onClick={handleConnectClick}>{connecting ? 'Connecting' : 'Connect'}</button>
             <button style={{ backgroundColor: removing ? 'lime' : 'red' }} onClick={handleRemoveClick}>{removing ? 'Removing' : 'Remove'}</button>
             <button style={{ backgroundColor: (algorithm === 'dijkstra') ? 'lime' : 'red' }} onClick={handleDijkstraClick}>{(algorithm === 'dijkstra') ? 'Applying Dijkstra' : 'Dijkstra'}</button>
+            <button style={{ backgroundColor: (algorithm === 'kruskal') ? 'lime' : 'red' }} onClick={handleKruskalClick}>{(algorithm === 'kruskal') ? 'Applying Kruskal' : 'Kruskal'}</button>
         </div>
     );
 }

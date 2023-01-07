@@ -4,12 +4,14 @@ import { EdgeType } from "../graph/graphSlice";
 
 type MenuStateType = {
     edgeMenu: boolean,
-    focusedEdge: EdgeType | null
+    focusedEdge: EdgeType | null,
+    weighted: boolean
 }
 
 const initialState: MenuStateType = {
     edgeMenu: false,
-    focusedEdge: null
+    focusedEdge: null,
+    weighted: true
 }
 
 export const menuSlice = createSlice({
@@ -23,14 +25,18 @@ export const menuSlice = createSlice({
         },
         disableEdgeMenu: (state) => {
             state.focusedEdge = null;
-            state.edgeMenu = true;
+            state.edgeMenu = false;
+        },
+        toggleWeighted: (state, action: PayloadAction<boolean>) => {
+            state.weighted = action.payload;
         }
     }
 });
 
-export const { focusEdge, disableEdgeMenu } = menuSlice.actions;
+export const { focusEdge, disableEdgeMenu, toggleWeighted } = menuSlice.actions;
 
 export const selectEdgeMenu = (state: RootState) => state.menu.edgeMenu;
 export const selectFocusedEdge = (state: RootState) => state.menu.focusedEdge;
+export const selectWeighted = (state: RootState) => state.menu.weighted;
 
 export default menuSlice.reducer;

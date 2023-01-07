@@ -1,31 +1,41 @@
 import React from "react";
 import "./EdgeMenu.css";
-import { selectFocusedEdge } from "../../../features/menu/menuSlice";
+import { disableEdgeMenu, selectFocusedEdge, selectWeighted } from "../../../features/menu/menuSlice";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { EdgeType, updateEdgeWeight } from "../../../features/graph/graphSlice";
+import { EdgeType, removeEdge, removeNode, updateEdgeWeight } from "../../../features/graph/graphSlice";
 
 const EdgeMenu = () => {
 
-    const edge = useAppSelector(selectFocusedEdge);
+    const focusedEdge = useAppSelector(selectFocusedEdge);
+    const weighted = useAppSelector(selectWeighted);
     const dispatch = useAppDispatch();
 
     const handleChange = (ev: any) => {
         const updatedEdge: EdgeType = {
-            connectedNodes: edge?.connectedNodes!,
+            connectedNodes: focusedEdge?.connectedNodes!,
             weight: parseInt(ev.target.value.toString())
         }
 
         dispatch(updateEdgeWeight(updatedEdge));
     }
 
+    const handleRemove = () => {
+        if (!focusedEdge) return;
+
+        dispatch(removeEdge(focusedEdge));
+        dispatch(disableEdgeMenu());
+    }
+
     return (
         <div className="edge-menu">
             <h1>Edge Settings</h1>
-            <h3>Connected Nodes: <span style={{fontWeight: 'lighter'}}>{`${edge?.connectedNodes.charAt(0)} <-> ${edge?.connectedNodes.charAt(1)}`}</span></h3>
+            <h3>Connected Nodes: <span style={{ fontWeight: 'lighter' }}>{`${focusedEdge?.connectedNodes.charAt(0)} <-> ${focusedEdge?.connectedNodes.charAt(1)}`}</span></h3>
             <div className="weight">
                 <h3>Weight:</h3>
-                <input type='number' min='1' onChange={handleChange} />
+                <input disabled={!weighted} type='number' min='1' onChange={handleChange} />
             </div>
+            <button className="close-btn" onClick={() => dispatch(disableEdgeMenu())}>Close</button>
+            <button onClick={handleRemove}>Remove Edge</button>
         </div>
     );
 }

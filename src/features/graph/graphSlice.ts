@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 
-export interface NodeType  {
+export interface NodeType {
     x: number | undefined,
     y: number | undefined,
     label: string,
@@ -64,13 +64,13 @@ export const nodesSlice = createSlice({
 
             let newEdgeWeight = {} as EdgeType;
 
-            if (firstNode.label < secondNode.label){
+            if (firstNode.label < secondNode.label) {
                 newEdgeWeight = {
                     connectedNodes: firstNode.label + secondNode.label,
                     weight: 1
                 }
             }
-            else{
+            else {
                 newEdgeWeight = {
                     connectedNodes: secondNode.label + firstNode.label,
                     weight: 1
@@ -94,7 +94,7 @@ export const nodesSlice = createSlice({
             })
 
             state.edges.forEach((edge, i) => {
-                if(edge.connectedNodes.split("").includes(action.payload)) {
+                if (edge.connectedNodes.split("").includes(action.payload)) {
                     state.edges[i].connectedNodes = "deleted"
                 }
             })
@@ -107,11 +107,20 @@ export const nodesSlice = createSlice({
         updateEdgeWeight: (state, action: PayloadAction<EdgeType>) => {
             const index = state.edges.findIndex(e => e.connectedNodes === action.payload.connectedNodes);
             state.edges[index] = action.payload;
+        },
+        removeEdge: (state, action: PayloadAction<EdgeType>) => {
+            state.edges = state.edges.filter(edge => edge.connectedNodes !== action.payload.connectedNodes)
+            const labels = action.payload.connectedNodes.split("");
+
+            state.nodes.forEach(node => {
+                if(node.label === labels[0]) node.neighbours = node.neighbours.filter(e => e.label !== labels[1]);
+                if(node.label === labels[1]) node.neighbours = node.neighbours.filter(e => e.label !== labels[0]);
+            });
         }
     }
 });
 
-export const { addNode, toggleAddNode, toggleConnecting, toggleRemoving, createConnection, removeNode, changeAlgorithm, updateEdgeWeight } = nodesSlice.actions;
+export const { addNode, toggleAddNode, toggleConnecting, toggleRemoving, createConnection, removeNode, removeEdge, changeAlgorithm, updateEdgeWeight } = nodesSlice.actions;
 
 export const selectNodes = (state: RootState) => state.graph.nodes;
 export const selectEdges = (state: RootState) => state.graph.edges;

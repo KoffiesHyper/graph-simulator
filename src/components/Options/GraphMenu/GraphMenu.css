@@ -1,0 +1,56 @@
+.graph-menu {
+    background-color: rgb(60, 60, 60);
+    position: absolute;
+    left: calc(100vw - 260px);
+    top: 40vh;
+    width: 250px;
+    height: auto;
+    border-radius: 2px;
+    color: white;
+    display: grid;
+    justify-items: flex-start;
+    align-items: flex-start;
+    border: 1px solid rgb(40, 40, 40);
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1), 0 3px 20px 0 rgba(0, 0, 0, 0.1);
+}
+
+.graph-menu h1 {
+    font-size: 1.125rem;
+    padding-block: 10px;
+    margin: 0px;
+    justify-self: center;
+    font-weight: bold;
+    border-bottom: 1px solid rgb(40, 40, 40);
+    width: 100%;
+    text-align: center;
+}
+
+.graph-menu h2 {
+    font-size: 1rem;
+    margin: 0px;
+    font-weight: lighter;
+}
+
+.graph-menu .property {
+    width: 100%;
+}
+
+.graph-menu .weight {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.graph-menu input {
+    padding-inline: 20px;
+}
+
+.graph-menu p {
+    font-size: .8rem;
+    margin: 0px;
+    padding: 10px;
+    font-weight: bold;
+}
+
+.graph-menu span {
+    font-weight: normal;
+}

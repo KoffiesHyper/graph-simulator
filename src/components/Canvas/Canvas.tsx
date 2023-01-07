@@ -7,6 +7,7 @@ import Edge from '../Edge/Edge';
 import applyDijkstra from '../../algorithms/Dijkstra';
 import { isConnected } from '../../algorithms/DepthFirstSearch';
 import applyKruskal from '../../algorithms/Kruskal';
+import { focusEdge } from '../../features/menu/menuSlice';
 
 const Canvas = () => {
     const nodes = useAppSelector(selectNodes);
@@ -40,12 +41,14 @@ const Canvas = () => {
 
     useEffect(() => {
         if (algorithm !== 'dijkstra') setDPath([]);
+        if (algorithm !== 'kruskal') setKruskalMST([]);
+        
+        if (algorithm === 'kruskal') getKruskal();
     }, [algorithm]);
 
     useEffect(() => {
-        const MST = applyKruskal(nodes, edges);
-        if(MST)
-            setKruskalMST(MST);
+        if (algorithm !== 'kruskal') return;
+        getKruskal();
     }, [nodes, edges]);
 
     const nodeRadius = 25;
@@ -62,7 +65,14 @@ const Canvas = () => {
                 secondNode: selectedNodes[1]
             }
 
+            const connectedNodes = [selectedNodes[0].label, selectedNodes[1].label].sort().join("");
+            const newEdge: EdgeType = {
+                connectedNodes: connectedNodes,
+                weight: 1
+            }
+
             dispatch(createConnection(connection));
+            dispatch(focusEdge(newEdge));
             setSelectedNodes([]);
         }, 100);
     }
@@ -136,6 +146,11 @@ const Canvas = () => {
         }
 
         return false;
+    }
+
+    const getKruskal = () => {
+        const tree = applyKruskal(nodes, edges);
+        if (tree) setKruskalMST(tree);
     }
 
     const edgeOnKruskal = (edge: string) => {
