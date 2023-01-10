@@ -1,7 +1,7 @@
 .canvas {
     width: 100vw;
     height: 100vh;
-    background-color: rgb(80, 80, 80);
+    background-color: rgb(80, 80, 100);
     cursor: crosshair;
     position: absolute;
     top: 0;
