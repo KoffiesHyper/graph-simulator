@@ -67,15 +67,21 @@ const TopBar = () => {
         dispatch(changeAlgorithm('longest_path'));
     }
 
+    const handleCCClick = () => {
+        disableAllActions();
+        dispatch(changeAlgorithm('connected_components'));
+    }
+
     const weightActionTitle = weighted ? 'switch_to_unweighted_graph' : 'switch_to_weighted_graph';
     const directedActionTitle = directed ? 'switch_to_undirected_graph' : 'switch_to_directed_graph';
     const degreesTitle = degrees ? 'hide_degrees' : 'show_degrees';
-    const invertTitle = 'convert_to_inverse_graph'
+    const invertTitle = 'convert_to_inverse_graph';
 
     const algoActions: ActionsType = {
         dijkstra: handleDijkstraClick,
         kruskal: handleKruskalClick,
-        longest_path: handleLongestPathClick
+        longest_path: handleLongestPathClick,
+        connected_components: handleCCClick
     }
 
     const otherActions: ActionsType = {

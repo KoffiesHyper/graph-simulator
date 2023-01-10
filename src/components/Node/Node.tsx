@@ -51,7 +51,7 @@ const Node = ({ node, color, selected, setSelectedNodes }: NodePropsType) => {
         justifyContent: 'center',
         alignItems: 'center',
         zIndex: 10,
-        border: selected ? "3px solid blue" : `3px solid ${color}`,
+        border: selected ? "3px solid skyblue" : `3px solid ${color}`,
         boxShadow: `0 4px 8px 0 ${shadowColor}, 0 6px 20px 0 ${shadowColor}`
     };
 

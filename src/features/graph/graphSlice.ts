@@ -15,7 +15,7 @@ export type EdgeType = {
     to?: NodeType
 }
 
-type AlgorithmType = undefined | 'dijkstra' | 'kruskal' | 'longest_path';
+type AlgorithmType = undefined | 'dijkstra' | 'kruskal' | 'longest_path' | 'connected_components';
 
 export type GraphStateType = {
     nodes: NodeType[],
@@ -61,12 +61,15 @@ export const nodesSlice = createSlice({
         },
         toggleDirected: (state) => {
             state.directed = !state.directed;
+            state.edges = [];
+            state.nodes = [];
+            state.nextNodeLabel = 'A'
         },
         createConnection: (state, action: PayloadAction<{ firstNode: NodeType, secondNode: NodeType }>) => {
             const { firstNode, secondNode } = action.payload;
             state.nodes.forEach(node => {
                 if (node.label === firstNode.label && node.neighbours.findIndex(e => e.label === secondNode.label) === -1) { node.neighbours.push(secondNode) }
-                if (node.label === secondNode.label && 
+                if (node.label === secondNode.label &&
                     node.neighbours.findIndex(e => e.label === firstNode.label) === -1 &&
                     !state.directed) { node.neighbours.push(firstNode) }
             })
@@ -86,7 +89,7 @@ export const nodesSlice = createSlice({
                 }
             }
 
-            if(state.directed) {
+            if (state.directed) {
                 newEdgeWeight.from = firstNode;
                 newEdgeWeight.to = secondNode;
             }
@@ -144,18 +147,46 @@ export const nodesSlice = createSlice({
                     const connectedNodes = (node.label < neighbour.label) ? node.label + neighbour.label : neighbour.label + node.label;
                     if (originalEdges.find(e => e.connectedNodes === connectedNodes)) return;
 
-                    node.neighbours.push({...neighbour, neighbours: []});
-                    if(!state.edges.find(e => e.connectedNodes === connectedNodes)) state.edges.push({connectedNodes: connectedNodes, weight: 1})
+                    node.neighbours.push({ ...neighbour, neighbours: [] });
+                    if (!state.edges.find(e => e.connectedNodes === connectedNodes)) state.edges.push({ connectedNodes: connectedNodes, weight: 1 })
                 })
             })
         },
         resetEdgeWeights: (state) => {
-            state.edges = state.edges.map(e => { return {...e, weight: 1 }});
+            state.edges = state.edges.map(e => { return { ...e, weight: 1 } });
+        },
+        flipEdge: (state, action: PayloadAction<string>) => {
+            const edge = state.edges.find(edge => edge.connectedNodes === action.payload);
+            if (!edge) return;
+            
+            const fromNode = {...edge.from} as NodeType;
+            if(!fromNode) return;
+
+            edge.from = edge.to;
+            edge.to = fromNode;
+
+            const fromNodeIndex = state.nodes.findIndex(node => node.label === fromNode.label)!;
+            state.nodes[fromNodeIndex].neighbours = state.nodes[fromNodeIndex].neighbours.filter(n => n.label !== edge.from?.label)!;
+            state.nodes.find(node => node.label === edge.from?.label)?.neighbours.push(fromNode);
         }
     }
 });
 
-export const { addNode, toggleAddNode, toggleConnecting, toggleRemoving, toggleDirected, createConnection, removeNode, removeEdge, changeAlgorithm, updateEdgeWeight, inverseGraph, resetEdgeWeights } = nodesSlice.actions;
+export const {
+    addNode,
+    toggleAddNode,
+    toggleConnecting,
+    toggleRemoving,
+    toggleDirected,
+    createConnection,
+    removeNode,
+    removeEdge,
+    changeAlgorithm,
+    updateEdgeWeight,
+    inverseGraph,
+    resetEdgeWeights,
+    flipEdge
+} = nodesSlice.actions;
 
 export const selectNodes = (state: RootState) => state.graph.nodes;
 export const selectEdges = (state: RootState) => state.graph.edges;

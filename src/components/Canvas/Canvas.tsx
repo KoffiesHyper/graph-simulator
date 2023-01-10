@@ -9,6 +9,19 @@ import { isConnected } from '../../algorithms/DepthFirstSearch';
 import applyKruskal from '../../algorithms/Kruskal';
 import { focusEdge } from '../../features/menu/menuSlice';
 import applyLongestPath from '../../algorithms/LongestPath';
+import applyConnectedComponents, { CCNode } from '../../algorithms/ConnectedComponents';
+
+const VIBRANT_COLORS = [
+    "rgb(255, 0, 0)", "rgb(255, 153, 51)", "rgb(255, 255, 0)",
+    "rgb(0, 255, 0)", "rgb(0, 255, 255)", "rgb(0, 0, 255)",
+    "rgb(153, 51, 255)", "rgb(255, 0, 255)", "rgb(255, 102, 0)",
+    "rgb(255, 255, 153)", "rgb(51, 153, 255)", "rgb(255, 102, 178)",
+    "rgb(0, 153, 204)", "rgb(51, 153, 102)", "rgb(255, 0, 102)",
+    "rgb(178, 255, 102)", "rgb(102, 0, 255)", "rgb(102, 255, 204)",
+    "rgb(255, 204, 153)", "rgb(153, 255, 51)", "rgb(0, 102, 255)",
+    "rgb(153, 51, 0)", "rgb(255, 153, 153)", "rgb(51, 255, 153)",
+    "rgb(255, 51, 153)", "rgb(51, 153, 153)", "rgb(153, 153, 153)"
+];
 
 const Canvas = () => {
     const nodes = useAppSelector(selectNodes);
@@ -23,6 +36,7 @@ const Canvas = () => {
     const [selectedNodes, setSelectedNodes] = useState([] as NodeType[]);
     const [path, setPath] = useState<any[]>([]);
     const [kruskalMST, setKruskalMST] = useState<EdgeType[]>([]);
+    const [connectedComps, setConnectedComps] = useState<CCNode[]>([]);
 
     useEffect(() => {
         window.addEventListener('mouseclick', handleClick);
@@ -49,13 +63,15 @@ const Canvas = () => {
     useEffect(() => {
         if (algorithm !== 'dijkstra') setPath([]);
         if (algorithm !== 'kruskal') setKruskalMST([]);
-        
+        if (algorithm !== 'connected_components') setConnectedComps([]);
+
         if (algorithm === 'kruskal') getKruskal();
+        if (algorithm === 'connected_components') getConnectedComponents();
     }, [algorithm]);
 
     useEffect(() => {
-        if (algorithm !== 'kruskal') return;
-        getKruskal();
+        if (algorithm === 'kruskal') getKruskal();
+        if (algorithm === 'connected_components') getConnectedComponents();
     }, [nodes, edges]);
 
     const nodeRadius = 25;
@@ -165,6 +181,18 @@ const Canvas = () => {
         return false;
     }
 
+    const getConnectedComponents = () => {
+        const CC_Graph = applyConnectedComponents(nodes);
+        setConnectedComps(CC_Graph);
+    }
+
+    const getNodeColor = (node: NodeType) => {
+        const CC_Node = connectedComps.find(comp => comp.label === node.label);
+
+        if (CC_Node) return VIBRANT_COLORS[CC_Node.group];
+        return "rgb(255, 255, 255)"
+    }
+
     const isSelected = (node: NodeType) => {
         for (let i = 0; i < selectedNodes.length; i++) {
             if (selectedNodes[i].label === node.label) return true;
@@ -177,7 +205,8 @@ const Canvas = () => {
         <>
             {
                 nodes.map(node => {
-                    const color = nodeOnPath(node) ? 'rgb(0, 255, 0)' : 'rgb(255, 255, 255)';
+                    let color = nodeOnPath(node) ? 'rgb(0, 255, 0)' : 'rgb(255, 255, 255)';
+                    if (connectedComps.length > 0) color = getNodeColor(node);
                     return <Node key={node.label} node={node} color={color} selected={isSelected(node)} setSelectedNodes={setSelectedNodes} />
                 })
             }

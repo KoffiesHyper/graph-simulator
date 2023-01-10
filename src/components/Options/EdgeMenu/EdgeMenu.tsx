@@ -2,7 +2,7 @@ import React from "react";
 import "./EdgeMenu.css";
 import { disableEdgeMenu, selectFocusedEdge, selectWeighted } from "../../../features/menu/menuSlice";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { EdgeType, removeEdge, removeNode, updateEdgeWeight } from "../../../features/graph/graphSlice";
+import { EdgeType, flipEdge, removeEdge, removeNode, updateEdgeWeight } from "../../../features/graph/graphSlice";
 
 const EdgeMenu = () => {
 
@@ -35,6 +35,7 @@ const EdgeMenu = () => {
                 <h3>Weight:</h3>
                 <input disabled={!weighted} type='number' min='1' onChange={handleChange} />
             </div>
+            <button className="close-btn" onClick={() => dispatch(flipEdge(focusedEdge!.connectedNodes))}>Flip direction</button>
             <button className="close-btn" onClick={() => dispatch(disableEdgeMenu())}>Close</button>
             <button onClick={handleRemove}>Remove Edge</button>
         </div>

@@ -67,7 +67,7 @@ const Edge = ({ from, to, color, connectedNodes }: EdgePropsType) => {
             {(directed && getDirection()) && <div></div>}
             {!directed && <div></div>}
 
-            {weighted && <p style={{ backgroundColor: 'rgb(80, 80, 80)', fontWeight: 'bold' }}>{getWeight()}</p>}
+            {weighted && <p style={{ backgroundColor: 'rgb(80, 80, 100)', fontWeight: 'bold' }}>{getWeight()}</p>}
             {!weighted && <div></div>}
 
             {(directed && getDirection()) && <div style={{ borderLeft: `20px solid ${color}` }} className="arrowhead end"></div>}
