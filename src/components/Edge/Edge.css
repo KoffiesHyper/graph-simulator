@@ -1,5 +1,5 @@
 .edge{
-    background-color: red;
+    background-color: white;
     cursor: pointer;
     display: grid;
     justify-items: center;
@@ -31,14 +31,12 @@
 
 .edge .start{
     justify-self: flex-start;
-    border-top: 12.5px solid rgb(80, 80, 80);
-	border-right: 25px solid red;
-	border-bottom: 12.5px solid rgb(80, 80, 80);
+    border-top: 10px solid rgb(80, 80, 80);
+	border-bottom: 10px solid rgb(80, 80, 80);
 }
 
 .edge .end{
     justify-self: flex-end;
-    border-top: 12.5px solid rgb(80, 80, 80);
-	border-left: 25px solid red;
-	border-bottom: 12.5px solid rgb(80, 80, 80);
+    border-top: 10px solid rgb(80, 80, 80);
+	border-bottom: 10px solid rgb(80, 80, 80);
 }

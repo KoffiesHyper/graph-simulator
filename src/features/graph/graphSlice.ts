@@ -10,7 +10,9 @@ export interface NodeType {
 
 export type EdgeType = {
     connectedNodes: string,
-    weight: number
+    weight: number,
+    from?: NodeType,
+    to?: NodeType
 }
 
 type AlgorithmType = undefined | 'dijkstra' | 'kruskal' | 'longest_path';
@@ -22,7 +24,8 @@ export type GraphStateType = {
     removing: boolean,
     algorithm: AlgorithmType,
     nextNodeLabel: string,
-    edges: EdgeType[]
+    edges: EdgeType[],
+    directed: boolean
 }
 
 const initialState: GraphStateType = {
@@ -32,7 +35,8 @@ const initialState: GraphStateType = {
     removing: false,
     algorithm: undefined,
     nextNodeLabel: 'A',
-    edges: []
+    edges: [],
+    directed: false
 }
 
 export const nodesSlice = createSlice({
@@ -55,11 +59,16 @@ export const nodesSlice = createSlice({
         toggleRemoving: (state, action: PayloadAction<boolean>) => {
             state.removing = action.payload;
         },
+        toggleDirected: (state) => {
+            state.directed = !state.directed;
+        },
         createConnection: (state, action: PayloadAction<{ firstNode: NodeType, secondNode: NodeType }>) => {
             const { firstNode, secondNode } = action.payload;
             state.nodes.forEach(node => {
                 if (node.label === firstNode.label && node.neighbours.findIndex(e => e.label === secondNode.label) === -1) { node.neighbours.push(secondNode) }
-                if (node.label === secondNode.label && node.neighbours.findIndex(e => e.label === firstNode.label) === -1) { node.neighbours.push(firstNode) }
+                if (node.label === secondNode.label && 
+                    node.neighbours.findIndex(e => e.label === firstNode.label) === -1 &&
+                    !state.directed) { node.neighbours.push(firstNode) }
             })
 
             let newEdgeWeight = {} as EdgeType;
@@ -75,6 +84,11 @@ export const nodesSlice = createSlice({
                     connectedNodes: secondNode.label + firstNode.label,
                     weight: 1
                 }
+            }
+
+            if(state.directed) {
+                newEdgeWeight.from = firstNode;
+                newEdgeWeight.to = secondNode;
             }
 
             state.edges.push(newEdgeWeight);
@@ -141,7 +155,7 @@ export const nodesSlice = createSlice({
     }
 });
 
-export const { addNode, toggleAddNode, toggleConnecting, toggleRemoving, createConnection, removeNode, removeEdge, changeAlgorithm, updateEdgeWeight, inverseGraph, resetEdgeWeights } = nodesSlice.actions;
+export const { addNode, toggleAddNode, toggleConnecting, toggleRemoving, toggleDirected, createConnection, removeNode, removeEdge, changeAlgorithm, updateEdgeWeight, inverseGraph, resetEdgeWeights } = nodesSlice.actions;
 
 export const selectNodes = (state: RootState) => state.graph.nodes;
 export const selectEdges = (state: RootState) => state.graph.edges;
@@ -149,5 +163,6 @@ export const selectAddingNode = (state: RootState) => state.graph.addingNode;
 export const selectConnecting = (state: RootState) => state.graph.connecting;
 export const selectRemoving = (state: RootState) => state.graph.removing;
 export const selectAlgorithm = (state: RootState) => state.graph.algorithm;
+export const selectDirected = (state: RootState) => state.graph.directed;
 
 export default nodesSlice.reducer;

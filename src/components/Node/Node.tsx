@@ -19,10 +19,11 @@ const Node = ({ node, color, selected, setSelectedNodes }: NodePropsType) => {
     const removing = useAppSelector(selectRemoving);
     const algorithm = useAppSelector(selectAlgorithm);
     const showDegrees = useAppSelector(selectDegrees);
-    // const edges = useAppSelector(selectEdges);
-    // const nodes = useAppSelector(selectNodes);
+    const edges = useAppSelector(selectEdges);
+    const nodes = useAppSelector(selectNodes);
 
     const handleClick = (ev: any) => {
+        console.log(nodes, edges)
         if (connecting) {
             setSelectedNodes(nodes => [...nodes, node]);
         }
@@ -50,13 +51,13 @@ const Node = ({ node, color, selected, setSelectedNodes }: NodePropsType) => {
         justifyContent: 'center',
         alignItems: 'center',
         zIndex: 10,
-        border: selected ? "3px solid white" : `3px solid ${color}`,
+        border: selected ? "3px solid red" : `3px solid ${color}`,
         boxShadow: `0 4px 8px 0 ${shadowColor}, 0 6px 20px 0 ${shadowColor}`
     };
 
     return (
         <div className='node' style={nodeStyle} onClick={handleClick}>
-            <p style={{ fontSize: 20, color: 'white', fontWeight: 'bold' }}>{node.label}</p>
+            <p style={{ fontSize: 20, color: 'rgb(80, 80, 80)', fontWeight: 'bold' }}>{node.label}</p>
             {showDegrees && <p className="degree">{node.neighbours.length}</p>}
         </div>
     );

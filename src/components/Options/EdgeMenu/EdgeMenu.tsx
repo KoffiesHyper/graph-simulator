@@ -12,6 +12,7 @@ const EdgeMenu = () => {
 
     const handleChange = (ev: any) => {
         const updatedEdge: EdgeType = {
+            ...focusedEdge,
             connectedNodes: focusedEdge?.connectedNodes!,
             weight: parseInt(ev.target.value.toString())
         }

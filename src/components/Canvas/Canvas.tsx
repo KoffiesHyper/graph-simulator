@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './Canvas.css';
-import { addNode, createConnection, EdgeType, NodeType, selectAddingNode, selectAlgorithm, selectConnecting, selectEdges, selectNodes } from '../../features/graph/graphSlice';
+import { addNode, createConnection, EdgeType, NodeType, selectAddingNode, selectAlgorithm, selectConnecting, selectDirected, selectEdges, selectNodes } from '../../features/graph/graphSlice';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import Node from '../Node/Node';
 import Edge from '../Edge/Edge';
@@ -16,6 +16,7 @@ const Canvas = () => {
     const addingNode = useAppSelector(selectAddingNode);
     const connecting = useAppSelector(selectConnecting);
     const algorithm = useAppSelector(selectAlgorithm);
+    const directed = useAppSelector(selectDirected);
 
     const dispatch = useAppDispatch();
 
@@ -176,7 +177,7 @@ const Canvas = () => {
         <>
             {
                 nodes.map(node => {
-                    const color = nodeOnPath(node) ? 'rgb(0, 255, 0)' : 'rgb(255, 0, 0)';
+                    const color = nodeOnPath(node) ? 'rgb(0, 255, 0)' : 'rgb(255, 255, 255)';
                     return <Node key={node.label} node={node} color={color} selected={isSelected(node)} setSelectedNodes={setSelectedNodes} />
                 })
             }
@@ -190,16 +191,17 @@ const Canvas = () => {
                         <>
                             {
                                 node.neighbours.map(neighbour => {
-                                    if (node.label > neighbour.label)
+                                    const connectedNodes = [node.label, neighbour.label].sort().join('');
+                                    if (node.label > neighbour.label && !directed)
                                         return <></>;
 
 
                                     return <Edge
                                         from={node}
                                         to={neighbour}
-                                        color={edgeOnPath(node, neighbour) || edgeOnKruskal(node.label + neighbour.label) ? 'rgb(0, 255, 0)' : 'rgb(255, 0, 0)'}
-                                        connectedNodes={node.label + neighbour.label}
-                                        key={node.label + neighbour.label}
+                                        color={edgeOnPath(node, neighbour) || edgeOnKruskal(connectedNodes) ? 'rgb(0, 255, 0)' : 'rgb(255, 255, 255)'}
+                                        connectedNodes={connectedNodes}
+                                        key={connectedNodes}
                                     />
                                 })
                             }

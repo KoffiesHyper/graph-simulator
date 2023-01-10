@@ -14,7 +14,7 @@ const Options = () => {
         <div className="options-container">
             <TopBar />
             { edgeMenu && <EdgeMenu /> }
-            <GraphMenu />
+            {/* <GraphMenu /> */}
         </div>
     )
 }

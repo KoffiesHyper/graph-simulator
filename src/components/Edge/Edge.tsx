@@ -1,6 +1,6 @@
 import React from "react";
 import './Edge.css';
-import { NodeType, selectEdges } from "../../features/graph/graphSlice";
+import { NodeType, selectDirected, selectEdges } from "../../features/graph/graphSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { focusEdge, selectWeighted } from "../../features/menu/menuSlice";
 
@@ -15,6 +15,7 @@ const Edge = ({ from, to, color, connectedNodes }: EdgePropsType) => {
 
     const edges = useAppSelector(selectEdges);
     const weighted = useAppSelector(selectWeighted);
+    const directed = useAppSelector(selectDirected);
     const dispatch = useAppDispatch();
 
     const width = Math.sqrt(Math.pow(from.x! - to.x!, 2) + Math.pow(from.y! - to.y!, 2));
@@ -36,7 +37,7 @@ const Edge = ({ from, to, color, connectedNodes }: EdgePropsType) => {
         transform: `rotate(${angle}rad)`
     }
 
-    if (color !== 'rgb(255, 0, 0)') {
+    if (color !== 'rgb(255, 255, 255)') {
         styles.backgroundColor = color;
     }
 
@@ -50,12 +51,28 @@ const Edge = ({ from, to, color, connectedNodes }: EdgePropsType) => {
         return edges.find(e => e.connectedNodes === connectedNodes)?.weight;
     }
 
+    const getDirection = () => {
+        const edge = edges.find(e => e.connectedNodes === connectedNodes);
+
+        if(!(edge?.from && edge?.to && edge)) return false;
+        if(!(edge?.from.x && edge?.to.x)) return false;
+
+        if(edge.from.x > edge.to.x) return false;
+        return true;
+    } 
+
     return (
         <div className="edge" style={styles} onClick={handleClick}>
-            <div className="arrowhead start"></div>
+            {(directed && !getDirection()) && <div style={{ borderRight: `20px solid ${color}` }} className="arrowhead start"></div>}
+            {(directed && getDirection()) && <div></div>}
+            {!directed && <div></div>}
+
             {weighted && <p style={{ backgroundColor: 'rgb(80, 80, 80)', fontWeight: 'bold' }}>{getWeight()}</p>}
             {!weighted && <div></div>}
-            <div className="arrowhead end"></div>
+
+            {(directed && getDirection()) && <div style={{ borderLeft: `20px solid ${color}` }} className="arrowhead end"></div>}
+            {(directed && !getDirection()) && <div></div>}
+            {!directed && <div></div>}
         </div>
     );
 }
