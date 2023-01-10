@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./GraphMenu.css";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { selectEdges, selectNodes } from "../../../features/graph/graphSlice";
+import { inverseGraph, resetEdgeWeights, selectEdges, selectNodes } from "../../../features/graph/graphSlice";
 import { selectDegrees, selectWeighted, toggleDegrees, toggleWeighted } from "../../../features/menu/menuSlice";
 
 type PropertiesType = {
@@ -44,6 +44,7 @@ const GraphMenu = () => {
     }
 
     const handleWeightChange = (ev: any) => {
+        dispatch(resetEdgeWeights());
         if (ev.target.value === 'weighted') dispatch(toggleWeighted(true));
         else if (ev.target.value === 'unweighted') dispatch(toggleWeighted(false));
     }
@@ -62,7 +63,7 @@ const GraphMenu = () => {
                 })
             }
 
-            <div className="weight-setting">
+            {/* <div className="weight-setting">
                 <div className="radio">
                     <input checked={weighted} name='weighted' value='weighted' type='radio' onChange={handleWeightChange}></input>
                     <p>Weighted</p>
@@ -76,6 +77,10 @@ const GraphMenu = () => {
             <div className="degree-setting">
                 <button onClick={() => dispatch(toggleDegrees())}>{degrees ? "Hide Degrees" : "Show Degrees"}</button>
             </div>
+
+            <div className="inverse-setting">
+                <button onClick={() => dispatch(inverseGraph())}>Convert to Inverse</button>
+            </div> */}
         </div>
     );
 }

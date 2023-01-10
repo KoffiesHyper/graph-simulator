@@ -79,9 +79,30 @@
     justify-content: center;
     align-items: center;
     width: 100%;
+    border-bottom: 1px solid rgb(40, 40, 40);
 }
 
 .graph-menu .degree-setting button {
+    padding: 10px;
+    background-color: red;
+    color: white;
+    border: none;
+    outline: none;
+    border-radius: 30px;
+    padding-inline: 15px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.graph-menu .inverse-setting {
+    padding-block: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.graph-menu .inverse-setting button {
     padding: 10px;
     background-color: red;
     color: white;

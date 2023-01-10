@@ -1,6 +1,11 @@
 .edge{
     background-color: red;
     cursor: pointer;
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    grid-template-columns: 1fr 3fr 1fr;
+    grid-template-rows: 1fr;
 }
 
 .edge:hover{
@@ -15,4 +20,25 @@
     text-align: center;
     width: 20px;
     height: 20px;
+}
+
+.edge .arrowhead{
+    align-self: center;
+    margin-inline: 25px;
+    width: 0;
+	height: 0;
+}
+
+.edge .start{
+    justify-self: flex-start;
+    border-top: 12.5px solid rgb(80, 80, 80);
+	border-right: 25px solid red;
+	border-bottom: 12.5px solid rgb(80, 80, 80);
+}
+
+.edge .end{
+    justify-self: flex-end;
+    border-top: 12.5px solid rgb(80, 80, 80);
+	border-left: 25px solid red;
+	border-bottom: 12.5px solid rgb(80, 80, 80);
 }

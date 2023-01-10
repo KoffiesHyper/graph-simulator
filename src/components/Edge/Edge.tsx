@@ -33,10 +33,7 @@ const Edge = ({ from, to, color, connectedNodes }: EdgePropsType) => {
         position: 'absolute',
         left: ((from.x! + to.x!) / 2) - width / 2 + 25,
         top: ((from.y! + to.y!)) / 2 - height / 2 + 25,
-        transform: `rotate(${angle}rad)`,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
+        transform: `rotate(${angle}rad)`
     }
 
     if (color !== 'rgb(255, 0, 0)') {
@@ -55,7 +52,10 @@ const Edge = ({ from, to, color, connectedNodes }: EdgePropsType) => {
 
     return (
         <div className="edge" style={styles} onClick={handleClick}>
+            <div className="arrowhead start"></div>
             {weighted && <p style={{ backgroundColor: 'rgb(80, 80, 80)', fontWeight: 'bold' }}>{getWeight()}</p>}
+            {!weighted && <div></div>}
+            <div className="arrowhead end"></div>
         </div>
     );
 }

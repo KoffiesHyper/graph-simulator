@@ -12,13 +12,51 @@
 
 .topbar button{
     padding: 10px;
-    background-color: red;
-    color: white;
-    border: none;
+    background-color: transparent;
+    color: red;
+    border: 3px solid red;
     outline: none;
-    border-radius: 30px;
+    border-radius: 5px;
     margin-inline: 20px;
     padding-inline: 15px;
     cursor: pointer;
+    font-weight: normal;
+    font-family: Roboto;
+    position: relative;
+    box-shadow: 0 4px 8px 0 rgba(255, 0, 0, 0.2), 0 3px 5px 0 rgba(255, 0, 0, 0.2);
+}
+
+.topbar button:hover{
+    background-color: rgba(255, 0, 0, 0.1);
+}
+
+
+.topbar button .action-list{
+    position: absolute;
+    width: 200%;
+    height: 300px;
+    top: 40px;
+    left: 0px;
+    background-color: rgb(200, 200, 200);
+    border-radius: 5px;
+}
+
+.topbar button .action{
+    background-color: rgb(160, 160, 160);    
+    padding-block: 10px;
+    padding-inline: 5px;
+    margin-block: 5px;
+    text-align: start;
+    border-radius: 5px;
+    margin-inline: 2px;
+}
+
+.topbar button .action:hover{
+    background-color: rgb(100, 100, 100);
+}
+
+.topbar button .action p{
+    margin: 0px;
     font-weight: bold;
+    color: white
 }

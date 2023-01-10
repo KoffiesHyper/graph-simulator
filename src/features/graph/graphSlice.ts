@@ -113,14 +113,35 @@ export const nodesSlice = createSlice({
             const labels = action.payload.connectedNodes.split("");
 
             state.nodes.forEach(node => {
-                if(node.label === labels[0]) node.neighbours = node.neighbours.filter(e => e.label !== labels[1]);
-                if(node.label === labels[1]) node.neighbours = node.neighbours.filter(e => e.label !== labels[0]);
+                if (node.label === labels[0]) node.neighbours = node.neighbours.filter(e => e.label !== labels[1]);
+                if (node.label === labels[1]) node.neighbours = node.neighbours.filter(e => e.label !== labels[0]);
             });
+        },
+        inverseGraph: (state) => {
+            const originalEdges = [...state.edges];
+            state.edges = [];
+
+            state.nodes = state.nodes.map(node => { return { ...node, neighbours: [] } });
+
+            state.nodes.forEach(node => {
+                state.nodes.forEach(neighbour => {
+                    if (node.label === neighbour.label) return;
+
+                    const connectedNodes = (node.label < neighbour.label) ? node.label + neighbour.label : neighbour.label + node.label;
+                    if (originalEdges.find(e => e.connectedNodes === connectedNodes)) return;
+
+                    node.neighbours.push({...neighbour, neighbours: []});
+                    if(!state.edges.find(e => e.connectedNodes === connectedNodes)) state.edges.push({connectedNodes: connectedNodes, weight: 1})
+                })
+            })
+        },
+        resetEdgeWeights: (state) => {
+            state.edges = state.edges.map(e => { return {...e, weight: 1 }});
         }
     }
 });
 
-export const { addNode, toggleAddNode, toggleConnecting, toggleRemoving, createConnection, removeNode, removeEdge, changeAlgorithm, updateEdgeWeight } = nodesSlice.actions;
+export const { addNode, toggleAddNode, toggleConnecting, toggleRemoving, createConnection, removeNode, removeEdge, changeAlgorithm, updateEdgeWeight, inverseGraph, resetEdgeWeights } = nodesSlice.actions;
 
 export const selectNodes = (state: RootState) => state.graph.nodes;
 export const selectEdges = (state: RootState) => state.graph.edges;
