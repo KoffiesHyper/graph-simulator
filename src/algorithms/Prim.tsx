@@ -23,8 +23,9 @@ const applyPrim = (startingNode: NodeType, nodes: NodeType[], edges: EdgeType[])
             }
         }
 
+        console.log(edgeSet, visited)
         edgeSet.sort((a, b) => a.weight - b.weight);
-        if (edgeSet.length > 0) addEdge(edgeSet[0]);
+        if (edgeSet.length > 0) addEdge(nodes, edgeSet[0]);
         edgeSet = [];
 
         if (i === 20) break;
@@ -44,19 +45,18 @@ const getEdge = (from: NodeType, to: NodeType, edges: EdgeType[]) => {
     return edge;
 }
 
-const addEdge = (edge: EdgeType) => {
+const addEdge = (nodes: NodeType[], edge: EdgeType) => {
     tree.push(edge);
     const labels = edge.connectedNodes.split('');
 
-    let firstNode = treeGraph.findIndex(node => node.label === labels[0]);
-    let secondNode = treeGraph.findIndex(node => node.label === labels[1]);
+    let firstNode = nodes.findIndex(node => node.label === labels[0]);
+    let secondNode = nodes.findIndex(node => node.label === labels[1]);
 
-    treeGraph[firstNode].neighbours.push(treeGraph[secondNode]);
-    treeGraph[secondNode].neighbours.push(treeGraph[firstNode]);
+    treeGraph[firstNode].neighbours.push(nodes[secondNode]);
+    treeGraph[secondNode].neighbours.push(nodes[firstNode]);
 
-    if (!visited.find(node => node.label === labels[0])) visited.push(treeGraph[firstNode]);
-    if (!visited.find(node => node.label === labels[1])) visited.push(treeGraph[secondNode])
-
+    if (!visited.find(node => node.label === labels[0])) visited.push(nodes[firstNode]);
+    if (!visited.find(node => node.label === labels[1])) visited.push(nodes[secondNode])
 }
 
 export default applyPrim;
