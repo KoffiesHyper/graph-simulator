@@ -10,6 +10,7 @@ import { focusEdge } from '../../features/menu/menuSlice';
 import applyLongestPath from '../../algorithms/LongestPath';
 import applyConnectedComponents, { CCNode } from '../../algorithms/ConnectedComponents';
 import applyPrim from '../../algorithms/Prim';
+import applyBreadthFirstSearch from '../../algorithms/BreadthFirstSearch';
 
 const VIBRANT_COLORS = [
     "rgb(255, 0, 0)", "rgb(255, 153, 51)", "rgb(255, 255, 0)",
@@ -49,6 +50,12 @@ const Canvas = () => {
 
         if (selectedNodes.length === 2 && algorithm === 'dijkstra') {
             const graph = applyDijkstra(selectedNodes[0], selectedNodes[1], nodes, edges);
+            extractPath(graph, selectedNodes[1]);
+            setSelectedNodes([]);
+        }
+
+        if (selectedNodes.length === 2 && algorithm === 'bfs') {
+            const graph = applyBreadthFirstSearch(nodes, selectedNodes[0], selectedNodes[1]);
             extractPath(graph, selectedNodes[1]);
             setSelectedNodes([]);
         }
@@ -122,15 +129,22 @@ const Canvas = () => {
         let currentLabel = finish.label;
         let path: string[] = [];
         let x = 0;
+        let len = 0;
 
+        console.log(graph)
         while (true) {
             for (let i = 0; i < graph.length; i++) {
                 if (graph[i].label === currentLabel) {
+                    len++;
                     path = [currentLabel, ...path];
                     x = i;
                     break;
                 }
             }
+
+            if(len > 100) return path;
+
+            console.log(path)
 
             if (graph[x].previous)
                 currentLabel = graph[x].previous.label;
@@ -205,6 +219,10 @@ const Canvas = () => {
         }
 
         return false;
+    }
+
+    const getBFS = () => {
+
     }
 
     const Nodes: React.ReactNode =

@@ -15,7 +15,7 @@ export type EdgeType = {
     to?: NodeType
 }
 
-type AlgorithmType = undefined | 'dijkstra' | 'kruskal' | 'prim' | 'longest_path' | 'connected_components';
+export type AlgorithmType = undefined | 'bfs' | 'dfs' | 'dijkstra' | 'kruskal' | 'prim' | 'longest_path' | 'connected_components';
 
 export type GraphStateType = {
     nodes: NodeType[],

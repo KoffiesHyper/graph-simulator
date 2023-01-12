@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import './TopBar.css';
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { changeAlgorithm, selectConnecting, selectRemoving, selectAlgorithm, toggleConnecting, toggleRemoving, selectAddingNode, toggleAddNode, resetEdgeWeights, inverseGraph, toggleDirected, selectDirected } from "../../../features/graph/graphSlice";
+import { changeAlgorithm, selectConnecting, selectRemoving, selectAlgorithm, toggleConnecting, toggleRemoving, selectAddingNode, toggleAddNode, resetEdgeWeights, inverseGraph, toggleDirected, selectDirected, AlgorithmType } from "../../../features/graph/graphSlice";
 import { selectDegrees, selectWeighted, toggleDegrees, toggleWeighted } from "../../../features/menu/menuSlice";
 
 type ActionsType = {
@@ -52,29 +52,9 @@ const TopBar = () => {
         dispatch(toggleRemoving(!removing));
     }
 
-    const handleDijkstraClick = () => {
+    const handleAlgorithmClick = (algorithm: AlgorithmType) => {
         disableAllActions();
-        dispatch(changeAlgorithm('dijkstra'));
-    }
-
-    const handleKruskalClick = () => {
-        disableAllActions();
-        dispatch(changeAlgorithm('kruskal'));
-    }
-
-    const handlePrimClick = () => {
-        disableAllActions();
-        dispatch(changeAlgorithm('prim'));
-    }
-
-    const handleLongestPathClick = () => {
-        disableAllActions();
-        dispatch(changeAlgorithm('longest_path'));
-    }
-
-    const handleCCClick = () => {
-        disableAllActions();
-        dispatch(changeAlgorithm('connected_components'));
+        dispatch(changeAlgorithm(algorithm));
     }
 
     const weightActionTitle = weighted ? 'switch_to_unweighted_graph' : 'switch_to_weighted_graph';
@@ -83,11 +63,12 @@ const TopBar = () => {
     const invertTitle = 'convert_to_inverse_graph';
 
     const algoActions: ActionsType = {
-        dijkstra: handleDijkstraClick,
-        kruskal: handleKruskalClick,
-        prim: handlePrimClick,
-        longest_path: handleLongestPathClick,
-        connected_components: handleCCClick
+        dijkstra: () => handleAlgorithmClick('dijkstra'),
+        kruskal: () => handleAlgorithmClick('kruskal'),
+        prim: () => handleAlgorithmClick('prim'),
+        longest_path: () => handleAlgorithmClick('longest_path'),
+        connected_components: () => handleAlgorithmClick('connected_components'),
+        breadth_first_search: () => handleAlgorithmClick('bfs')
     }
 
     const otherActions: ActionsType = {

@@ -23,7 +23,6 @@ const Node = ({ node, color, selected, setSelectedNodes }: NodePropsType) => {
     const nodes = useAppSelector(selectNodes);
 
     const handleClick = (ev: any) => {
-        console.log(nodes, edges)
         if (connecting) {
             setSelectedNodes(nodes => [...nodes, node]);
         }
@@ -32,7 +31,7 @@ const Node = ({ node, color, selected, setSelectedNodes }: NodePropsType) => {
             dispatch(removeNode(node.label));
         }
 
-        if (algorithm === 'dijkstra' || algorithm === 'longest_path') {
+        if (algorithm === 'dijkstra' || algorithm === 'longest_path' || algorithm === 'bfs') {
             setSelectedNodes(nodes => [...nodes, node]);
         }
     }

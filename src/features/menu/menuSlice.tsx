@@ -13,7 +13,7 @@ const initialState: MenuStateType = {
     showDegrees: false,
     showEdgeMenu: false,
     focusedEdge: null,
-    weighted: true,
+    weighted: false,
 }
 
 export const menuSlice = createSlice({
