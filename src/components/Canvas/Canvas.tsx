@@ -5,11 +5,11 @@ import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import Node from '../Node/Node';
 import Edge from '../Edge/Edge';
 import applyDijkstra from '../../algorithms/Dijkstra';
-import { isConnected } from '../../algorithms/DepthFirstSearch';
 import applyKruskal from '../../algorithms/Kruskal';
 import { focusEdge } from '../../features/menu/menuSlice';
 import applyLongestPath from '../../algorithms/LongestPath';
 import applyConnectedComponents, { CCNode } from '../../algorithms/ConnectedComponents';
+import applyPrim from '../../algorithms/Prim';
 
 const VIBRANT_COLORS = [
     "rgb(255, 0, 0)", "rgb(255, 153, 51)", "rgb(255, 255, 0)",
@@ -35,7 +35,7 @@ const Canvas = () => {
 
     const [selectedNodes, setSelectedNodes] = useState([] as NodeType[]);
     const [path, setPath] = useState<any[]>([]);
-    const [kruskalMST, setKruskalMST] = useState<EdgeType[]>([]);
+    const [MST, setMST] = useState<EdgeType[]>([]);
     const [connectedComps, setConnectedComps] = useState<CCNode[]>([]);
 
     useEffect(() => {
@@ -62,10 +62,11 @@ const Canvas = () => {
 
     useEffect(() => {
         if (algorithm !== 'dijkstra') setPath([]);
-        if (algorithm !== 'kruskal') setKruskalMST([]);
+        if (algorithm !== 'kruskal') setMST([]);
         if (algorithm !== 'connected_components') setConnectedComps([]);
 
         if (algorithm === 'kruskal') getKruskal();
+        if (algorithm === 'prim') getPrim();
         if (algorithm === 'connected_components') getConnectedComponents();
     }, [algorithm]);
 
@@ -173,12 +174,17 @@ const Canvas = () => {
 
     const getKruskal = () => {
         const tree = applyKruskal(nodes, edges);
-        if (tree) setKruskalMST(tree);
+        if (tree) setMST(tree);
     }
 
     const edgeOnKruskal = (edge: string) => {
-        if (kruskalMST?.find(e => e.connectedNodes === edge)) return true;
+        if (MST?.find(e => e.connectedNodes === edge)) return true;
         return false;
+    }
+
+    const getPrim = () => {
+        const tree = applyPrim(nodes[0], nodes, edges);
+        if (tree) setMST(tree);
     }
 
     const getConnectedComponents = () => {

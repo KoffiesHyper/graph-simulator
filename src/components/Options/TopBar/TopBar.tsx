@@ -62,6 +62,11 @@ const TopBar = () => {
         dispatch(changeAlgorithm('kruskal'));
     }
 
+    const handlePrimClick = () => {
+        disableAllActions();
+        dispatch(changeAlgorithm('prim'));
+    }
+
     const handleLongestPathClick = () => {
         disableAllActions();
         dispatch(changeAlgorithm('longest_path'));
@@ -80,6 +85,7 @@ const TopBar = () => {
     const algoActions: ActionsType = {
         dijkstra: handleDijkstraClick,
         kruskal: handleKruskalClick,
+        prim: handlePrimClick,
         longest_path: handleLongestPathClick,
         connected_components: handleCCClick
     }

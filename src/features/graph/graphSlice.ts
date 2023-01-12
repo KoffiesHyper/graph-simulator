@@ -15,7 +15,7 @@ export type EdgeType = {
     to?: NodeType
 }
 
-type AlgorithmType = undefined | 'dijkstra' | 'kruskal' | 'longest_path' | 'connected_components';
+type AlgorithmType = undefined | 'dijkstra' | 'kruskal' | 'prim' | 'longest_path' | 'connected_components';
 
 export type GraphStateType = {
     nodes: NodeType[],
@@ -79,19 +79,18 @@ export const nodesSlice = createSlice({
             if (firstNode.label < secondNode.label) {
                 newEdgeWeight = {
                     connectedNodes: firstNode.label + secondNode.label,
-                    weight: 1
+                    weight: 1,
+                    from: firstNode,
+                    to: secondNode
                 }
             }
             else {
                 newEdgeWeight = {
                     connectedNodes: secondNode.label + firstNode.label,
-                    weight: 1
+                    weight: 1,
+                    from: firstNode,
+                    to: secondNode
                 }
-            }
-
-            if (state.directed) {
-                newEdgeWeight.from = firstNode;
-                newEdgeWeight.to = secondNode;
             }
 
             state.edges.push(newEdgeWeight);
@@ -148,7 +147,7 @@ export const nodesSlice = createSlice({
                     if (originalEdges.find(e => e.connectedNodes === connectedNodes)) return;
 
                     node.neighbours.push({ ...neighbour, neighbours: [] });
-                    if (!state.edges.find(e => e.connectedNodes === connectedNodes)) state.edges.push({ connectedNodes: connectedNodes, weight: 1 })
+                    if (!state.edges.find(e => e.connectedNodes === connectedNodes)) state.edges.push({ connectedNodes: connectedNodes, weight: 1, from: node, to: neighbour })
                 })
             })
         },
