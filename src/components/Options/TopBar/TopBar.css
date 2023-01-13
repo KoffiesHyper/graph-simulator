@@ -11,6 +11,7 @@
 }
 
 .topbar button{
+    height: 40px;
     padding: 10px;
     background-color: transparent;
     color: white;
@@ -25,6 +26,9 @@
     position: relative;
     /* box-shadow: 0 2px 4px 0 rgba(255, 255, 255, 0.2), 0 3px 5px 0 rgba(255, 255, 255, 0.2); */
     transition-duration: .15s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .topbar button:hover{

@@ -1,6 +1,6 @@
 import React from "react";
 import './Edge.css';
-import { NodeType, selectDirected, selectEdges } from "../../features/graph/graphSlice";
+import { NodeType, removeEdge, selectDirected, selectEdges, selectRemoving } from "../../features/graph/graphSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { focusEdge, selectWeighted } from "../../features/menu/menuSlice";
 
@@ -15,6 +15,7 @@ const Edge = ({ from, to, color, connectedNodes }: EdgePropsType) => {
     const edges = useAppSelector(selectEdges);
     const weighted = useAppSelector(selectWeighted);
     const directed = useAppSelector(selectDirected);
+    const removing = useAppSelector(selectRemoving)
     const dispatch = useAppDispatch();
 
     const width = Math.sqrt(Math.pow(from.x! - to.x!, 2) + Math.pow(from.y! - to.y!, 2));
@@ -63,9 +64,10 @@ const Edge = ({ from, to, color, connectedNodes }: EdgePropsType) => {
     }
 
     const handleClick = (ev: any) => {
-        const edge = edges.find((e) => e.connectedNodes === connectedNodes);
+        const edge = edges.find((e) => e.connectedNodes === connectedNodes)!;
 
-        if (edge) dispatch(focusEdge(edge));
+        if(removing) dispatch(removeEdge(edge));
+        else if (edge) dispatch(focusEdge(edge));
     }
 
     const getWeight = () => {

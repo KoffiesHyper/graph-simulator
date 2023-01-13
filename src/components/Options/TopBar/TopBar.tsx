@@ -3,6 +3,12 @@ import './TopBar.css';
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { changeAlgorithm, selectConnecting, selectRemoving, selectAlgorithm, toggleConnecting, toggleRemoving, selectAddingNode, toggleAddNode, resetEdgeWeights, inverseGraph, toggleDirected, selectDirected, AlgorithmType } from "../../../features/graph/graphSlice";
 import { selectDegrees, selectWeighted, toggleDegrees, toggleWeighted } from "../../../features/menu/menuSlice";
+import { IoMdAddCircleOutline } from 'react-icons/io'
+import { SlGraph } from 'react-icons/sl'
+import { RiDeleteBin5Line } from 'react-icons/ri'
+import { FiSettings } from 'react-icons/fi'
+import { FaCodeBranch } from 'react-icons/fa'
+import TopBarButton from "./TopBarButton";
 
 type ActionsType = {
     [index: string]: () => void
@@ -86,19 +92,27 @@ const TopBar = () => {
 
     return (
         <div className='topbar'>
-            <button className="first-btn" style={{ borderLeft: '2px solid white', color: addingNode ? 'lime' : 'white' }} onClick={handleAddNodeClick}>{addingNode ? 'Adding Node' : 'Add Node'}</button>
-            <button style={{ color: connecting ? 'lime' : 'white' }} onClick={handleConnectClick}>{connecting ? 'Adding Edge' : 'Add Edge'}</button>
-            <button style={{ color: removing ? 'lime' : 'white' }} onClick={handleRemoveClick}>{removing ? 'Removing' : 'Remove'}</button>
-            {/* <button style={{ color: (algorithm === 'dijkstra') ? 'lime' : 'white' }} onClick={handleDijkstraClick}>{(algorithm === 'dijkstra') ? 'Applying Dijkstra' : 'Dijkstra'}</button> */}
-            {/* <button style={{ color: (algorithm === 'kruskal') ? 'lime' : 'white' }} onClick={handleKruskalClick}>{(algorithm === 'kruskal') ? 'Applying Kruskal' : 'Kruskal'}</button> */}
-            {/* <button style={{ color: (algorithm === 'longest_path') ? 'lime' : 'white' }} onClick={handleLongestPathClick}>{(algorithm === 'longest_path') ? 'Applying Longest Path' : 'Longest Path'}</button> */}
-            
-            <button onClick={() => setAlgoExpanded(exp => !exp)} >Algorithms
+            <button className="first-btn" style={{ borderLeft: '2px solid white', color: addingNode ? 'lime' : 'white' }} onClick={handleAddNodeClick}>
+                <TopBarButton><IoMdAddCircleOutline /></TopBarButton>
+                {addingNode ? 'Adding Node' : 'Add Node'}
+            </button>
+            <button style={{ color: connecting ? 'lime' : 'white' }} onClick={handleConnectClick}>
+                <TopBarButton><SlGraph /></TopBarButton>
+                {connecting ? 'Adding Edge' : 'Add Edge'}
+            </button>
+            <button style={{ color: removing ? 'lime' : 'white' }} onClick={handleRemoveClick}>
+                <TopBarButton><RiDeleteBin5Line /></TopBarButton>
+                {removing ? 'Removing' : 'Remove'}
+            </button>
+
+            <button onClick={() => setAlgoExpanded(exp => !exp)} >
+                <TopBarButton><FaCodeBranch /></TopBarButton>
+                Algorithms
                 {algoExpanded &&
                     <div className="action-list">
                         {
                             Object.entries(algoActions).map(entry => {
-                                return(
+                                return (
                                     <div className="action" onClick={entry[1]}>
                                         <p>{formalize(entry[0])}</p>
                                     </div>
@@ -109,12 +123,14 @@ const TopBar = () => {
                 }
             </button>
 
-            <button className="last-btn" onClick={() => setActionExpanded(exp => !exp)} >Other Actions
+            <button className="last-btn" onClick={() => setActionExpanded(exp => !exp)} >
+                <TopBarButton><FiSettings /></TopBarButton>
+                Other Actions
                 {actionExpanded &&
                     <div className="action-list">
                         {
                             Object.entries(otherActions).map(entry => {
-                                return(
+                                return (
                                     <div className="action" onClick={entry[1]}>
                                         <p>{formalize(entry[0])}</p>
                                     </div>
