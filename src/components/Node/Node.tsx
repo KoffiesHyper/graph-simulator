@@ -23,6 +23,7 @@ const Node = ({ node, color, selected, setSelectedNodes }: NodePropsType) => {
     const nodes = useAppSelector(selectNodes);
 
     const handleClick = (ev: any) => {
+        // console.log(nodes)
         if (connecting) {
             setSelectedNodes(nodes => [...nodes, node]);
         }
@@ -51,7 +52,7 @@ const Node = ({ node, color, selected, setSelectedNodes }: NodePropsType) => {
         alignItems: 'center',
         zIndex: 10,
         border: selected ? "3px solid skyblue" : `3px solid ${color}`,
-        boxShadow: `0 4px 8px 0 ${shadowColor}, 0 6px 20px 0 ${shadowColor}`
+        boxShadow: `0 4px 8px 0 ${shadowColor}, 0 6px 20px 0 ${shadowColor}`,
     };
 
     return (

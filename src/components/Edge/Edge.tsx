@@ -12,7 +12,6 @@ type EdgePropsType = {
 }
 
 const Edge = ({ from, to, color, connectedNodes }: EdgePropsType) => {
-
     const edges = useAppSelector(selectEdges);
     const weighted = useAppSelector(selectWeighted);
     const directed = useAppSelector(selectDirected);
@@ -28,17 +27,39 @@ const Edge = ({ from, to, color, connectedNodes }: EdgePropsType) => {
 
     const shadowColor = `rgba(${color!.substring(4, color!.length - 1)}, 0.2)`;
 
-    const styles: React.CSSProperties = {
-        width: width,
-        height: height,
-        position: 'absolute',
-        left: ((from.x! + to.x!) / 2) - width / 2 + 25,
-        top: ((from.y! + to.y!)) / 2 - height / 2 + 25,
-        transform: `rotate(${angle}rad)`
+    let styles: React.CSSProperties = {};
+
+    const isLoop = from.label === to.label;
+
+    if (isLoop) {
+        styles = {
+            width: '40px',
+            height: '40px',
+            position: 'absolute',
+            left: from.x! - 2,
+            top: from.y! - 40,
+            border: '5px solid white',
+            borderRadius: '50%',
+            transform: 'scaleY(1.1)'
+        }
+    }
+    else {
+        styles = {
+            width: width,
+            height: height,
+            position: 'absolute',
+            left: ((from.x! + to.x!) / 2) - width / 2 + 25,
+            top: ((from.y! + to.y!)) / 2 - height / 2 + 25,
+            transform: `rotate(${angle}rad)`
+        }
     }
 
+
+    let highlighted = false;
+
     if (color !== 'rgb(255, 255, 255)') {
-        styles.backgroundColor = color;
+        // styles.backgroundColor = color;
+        highlighted = true;
     }
 
     const handleClick = (ev: any) => {
@@ -54,26 +75,36 @@ const Edge = ({ from, to, color, connectedNodes }: EdgePropsType) => {
     const getDirection = () => {
         const edge = edges.find(e => e.connectedNodes === connectedNodes);
 
-        if(!(edge?.from && edge?.to && edge)) return false;
-        if(!(edge?.from.x && edge?.to.x)) return false;
+        if (!(edge?.from && edge?.to && edge)) return false;
+        if (!(edge?.from.x && edge?.to.x)) return false;
 
-        if(edge.from.x > edge.to.x) return false;
+        if (edge.from.x > edge.to.x) return false;
         return true;
-    } 
+    }
 
     return (
-        <div className="edge" style={styles} onClick={handleClick}>
-            {(directed && !getDirection()) && <div style={{ borderRight: `20px solid ${color}` }} className="arrowhead start"></div>}
-            {(directed && getDirection()) && <div></div>}
-            {!directed && <div></div>}
+        <>
+            {!isLoop &&
+                <div className={`edge ${highlighted ? 'highlighted' : ''}`} style={styles} onClick={handleClick}>
+                    {(directed && !getDirection()) && <div style={{ borderRight: `20px solid ${color}` }} className="arrowhead start"></div>}
+                    {(directed && getDirection()) && <div></div>}
+                    {!directed && <div></div>}
 
-            {weighted && <p style={{ backgroundColor: 'rgb(80, 80, 100)', fontWeight: 'bold' }}>{getWeight()}</p>}
-            {!weighted && <div></div>}
+                    {weighted && <p style={{ backgroundColor: 'rgb(80, 80, 100)', fontWeight: 'bold' }}>{getWeight()}</p>}
+                    {!weighted && <div></div>}
 
-            {(directed && getDirection()) && <div style={{ borderLeft: `20px solid ${color}` }} className="arrowhead end"></div>}
-            {(directed && !getDirection()) && <div></div>}
-            {!directed && <div></div>}
-        </div>
+                    {(directed && getDirection()) && <div style={{ borderLeft: `20px solid ${color}` }} className="arrowhead end"></div>}
+                    {(directed && !getDirection()) && <div></div>}
+                    {!directed && <div></div>}
+                </div>
+            }
+
+            {isLoop &&
+                <div className={`loop ${highlighted ? 'highlighted' : ''}`} style={styles} onClick={handleClick}>
+                    {weighted && <p style={{ backgroundColor: 'rgb(80, 80, 100)', fontWeight: 'bold' }}>{getWeight()}</p>}
+                </div>
+            }
+        </>
     );
 }
 

@@ -40,3 +40,31 @@
     border-top: 10px solid rgb(80, 80, 80);
 	border-bottom: 10px solid rgb(80, 80, 80);
 }
+
+.highlighted{
+    animation-name: highlight;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards;
+    animation-iteration-count: 1;
+}
+
+.loop p {
+    position: absolute;
+    left: 12px;
+    top: -27px;
+    color: white;
+    width: 15px;
+    text-align: center;
+}
+
+@keyframes highlight {
+    0% {
+        background-color: white;
+        box-shadow: none;
+    }
+
+    100% {
+        background-color: lime;
+        box-shadow: inset 0 0 0.5em lime, 0 0 0.5em lime;
+    }
+}

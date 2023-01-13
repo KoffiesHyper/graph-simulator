@@ -62,6 +62,7 @@ const Canvas = () => {
 
         if (selectedNodes.length === 2 && algorithm === 'longest_path') {
             const graph = applyLongestPath(selectedNodes[0], selectedNodes[1], nodes, edges);
+            console.log(graph)
             extractPath(graph, selectedNodes[1]);
             setSelectedNodes([]);
         }
@@ -131,7 +132,6 @@ const Canvas = () => {
         let x = 0;
         let len = 0;
 
-        console.log(graph)
         while (true) {
             for (let i = 0; i < graph.length; i++) {
                 if (graph[i].label === currentLabel) {
@@ -142,9 +142,7 @@ const Canvas = () => {
                 }
             }
 
-            if(len > 100) return path;
-
-            console.log(path)
+            if (len > 100) return path;
 
             if (graph[x].previous)
                 currentLabel = graph[x].previous.label;
@@ -188,7 +186,16 @@ const Canvas = () => {
 
     const getKruskal = () => {
         const tree = applyKruskal(nodes, edges);
-        if (tree) setMST(tree);
+        if (!tree) return;
+
+        for (let i = 0; i < tree.length; i++) {
+            setTimeout(() => {
+                setMST(mst => {
+                    if (mst.length === 0 && i > 0) return mst;
+                    return [...mst, tree[i]]
+                })
+            }, 500 * i)
+        }
     }
 
     const edgeOnKruskal = (edge: string) => {
@@ -198,7 +205,17 @@ const Canvas = () => {
 
     const getPrim = () => {
         const tree = applyPrim(nodes[0], nodes, edges);
-        if (tree) setMST(tree);
+
+        if (!tree) return;
+
+        for (let i = 0; i < tree.length; i++) {
+            setTimeout(() => {
+                setMST(mst => {
+                    if (mst.length === 0 && i > 0) return mst;
+                    return [...mst, tree[i]]
+                })
+            }, 500 * i)
+        }
     }
 
     const getConnectedComponents = () => {
