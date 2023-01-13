@@ -3,10 +3,9 @@ import './TopBar.css';
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { changeAlgorithm, selectConnecting, selectRemoving, selectAlgorithm, toggleConnecting, toggleRemoving, selectAddingNode, toggleAddNode, resetEdgeWeights, inverseGraph, toggleDirected, selectDirected, AlgorithmType } from "../../../features/graph/graphSlice";
 import { selectDegrees, selectWeighted, toggleDegrees, toggleWeighted } from "../../../features/menu/menuSlice";
-import { IoMdAddCircleOutline } from 'react-icons/io'
+import { IoMdAddCircleOutline, IoMdSettings } from 'react-icons/io'
 import { SlGraph } from 'react-icons/sl'
 import { RiDeleteBin5Line } from 'react-icons/ri'
-import { FiSettings } from 'react-icons/fi'
 import { FaCodeBranch } from 'react-icons/fa'
 import TopBarButton from "./TopBarButton";
 
@@ -124,7 +123,7 @@ const TopBar = () => {
             </button>
 
             <button className="last-btn" onClick={() => setActionExpanded(exp => !exp)} >
-                <TopBarButton><FiSettings /></TopBarButton>
+                <TopBarButton><IoMdSettings /></TopBarButton>
                 Other Actions
                 {actionExpanded &&
                     <div className="action-list">

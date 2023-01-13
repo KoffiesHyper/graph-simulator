@@ -51,7 +51,7 @@ const Node = ({ node, color, selected, setSelectedNodes }: NodePropsType) => {
         justifyContent: 'center',
         alignItems: 'center',
         zIndex: 10,
-        border: selected ? "3px solid skyblue" : `3px solid ${color}`,
+        border: selected ? "3px solid white" : `3px solid ${color}`,
         boxShadow: `0 4px 8px 0 ${shadowColor}, 0 6px 20px 0 ${shadowColor}`,
     };
 
@@ -59,6 +59,7 @@ const Node = ({ node, color, selected, setSelectedNodes }: NodePropsType) => {
         <div className='node' style={nodeStyle} onClick={handleClick}>
             <p style={{ fontSize: 20, color: 'rgb(80, 80, 80)', fontWeight: 'bold' }}>{node.label}</p>
             {showDegrees && <p className="degree">{node.neighbours.length}</p>}
+            {selected && <div className="indicator"></div>}
         </div>
     );
 }
