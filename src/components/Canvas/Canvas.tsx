@@ -6,7 +6,7 @@ import Node from '../Node/Node';
 import Edge from '../Edge/Edge';
 import applyDijkstra from '../../algorithms/Dijkstra';
 import applyKruskal from '../../algorithms/Kruskal';
-import { focusEdge } from '../../features/menu/menuSlice';
+import { focusEdge, showMessage } from '../../features/menu/menuSlice';
 import applyLongestPath from '../../algorithms/LongestPath';
 import applyConnectedComponents, { CCNode } from '../../algorithms/ConnectedComponents';
 import applyPrim from '../../algorithms/Prim';
@@ -69,9 +69,9 @@ const Canvas = () => {
     }, [selectedNodes]);
 
     useEffect(() => {
-        if (algorithm !== 'dijkstra') setPath([]);
-        if (algorithm !== 'kruskal') setMST([]);
-        if (algorithm !== 'connected_components') setConnectedComps([]);
+        setPath([]);
+        setMST([]);
+        setConnectedComps([]);
 
         if (algorithm === 'kruskal') getKruskal();
         if (algorithm === 'prim') getPrim();
@@ -112,6 +112,11 @@ const Canvas = () => {
     const handleClick = (ev: any) => {
         if (!addingNode) return;
 
+        if(nodes.length === 26) {
+            dispatch(showMessage('Maximum number of nodes reached'))
+            return;
+        }
+
         const pos: NodeType = {
             x: ev.clientX - nodeRadius,
             y: ev.clientY - nodeRadius,
@@ -147,9 +152,18 @@ const Canvas = () => {
             if (graph[x].previous)
                 currentLabel = graph[x].previous.label;
             else {
-                setPath(path);
-                return;
+                break;
             }
+        }
+
+        for (let i = 0; i < path.length; i++) {
+            setTimeout(() => {
+                setPath(p => {
+                    if(p.length === 0 && i > 0) return [];
+                    if(i === 0) return [path[i]]
+                    return [...p, path[i]]; 
+                })
+            }, 500*i)
         }
     }
 
@@ -204,6 +218,7 @@ const Canvas = () => {
     }
 
     const getPrim = () => {
+        setMST([]);
         const tree = applyPrim(nodes[0], nodes, edges);
 
         if (!tree) return;

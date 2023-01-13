@@ -6,7 +6,8 @@ type MenuStateType = {
     showDegrees: boolean,
     showEdgeMenu: boolean,
     focusedEdge: EdgeType | null,
-    weighted: boolean
+    weighted: boolean,
+    message: string | null
 }
 
 const initialState: MenuStateType = {
@@ -14,6 +15,7 @@ const initialState: MenuStateType = {
     showEdgeMenu: false,
     focusedEdge: null,
     weighted: false,
+    message: null
 }
 
 export const menuSlice = createSlice({
@@ -34,15 +36,20 @@ export const menuSlice = createSlice({
         },
         toggleWeighted: (state, action: PayloadAction<boolean>) => {
             state.weighted = action.payload;
+        },
+        showMessage: (state, action: PayloadAction<string | null>) => {
+            if (action.payload === null) state.message = null;
+            if (!state.message) state.message = action.payload;
         }
     }
 });
 
-export const { focusEdge, disableEdgeMenu, toggleDegrees, toggleWeighted } = menuSlice.actions;
+export const { focusEdge, disableEdgeMenu, toggleDegrees, toggleWeighted, showMessage } = menuSlice.actions;
 
 export const selectDegrees = (state: RootState) => state.menu.showDegrees;
 export const selectEdgeMenu = (state: RootState) => state.menu.showEdgeMenu;
 export const selectFocusedEdge = (state: RootState) => state.menu.focusedEdge;
 export const selectWeighted = (state: RootState) => state.menu.weighted;
+export const selectMessage = (state: RootState) => state.menu.message;
 
 export default menuSlice.reducer;

@@ -33,7 +33,7 @@ const applyLongestPath = (start: NodeType, finish: NodeType, nodes: NodeType[], 
             for (let j = 0; j < stack[i].neighbours.length; j++) {
                 if (getDist(stack[i].label) + parseInt(getWeight(stack[i].label, stack[i].neighbours[j].label, edges).toString()) > getDist(stack[i].neighbours[j].label)) {
                     setPrev(stack[i].neighbours[j].label, stack[i], edges);
-                    // if (visited.find(e => e.label === stack[i].neighbours[j].label)) stack.push(getNodeWithLabel(stack[i].neighbours[j].label)!)
+                    if (visited.find(e => e.label === stack[i].neighbours[j].label)) stack.push(getNodeWithLabel(stack[i].neighbours[j].label)!)
                 }
             }
             console.log({...stack})

@@ -1,0 +1,40 @@
+.pop-up{
+    width: 200px;
+    position: fixed;
+    left: calc(50vw - 120px);
+    background-color: rgb(255, 205, 205);
+    color: red;
+    border-radius: 5px;
+    border: 2px solid red;
+    padding: 10px;
+    animation-name: pop-up;
+    animation-duration: 3s;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+    text-align: center;
+    font-weight: normal;
+    box-shadow: 0 0 0.5em red, inset 0 0 0.5em red;
+}
+
+@keyframes pop-up {
+    0% {
+        opacity: 0%;
+        top: 10vh;
+    }
+
+    15% {
+        opacity: 100%;
+        top: 13vh;
+    }
+
+    85% {
+        opacity: 100%;
+        top: 13vh;
+    }
+
+    100% {
+        opacity: 0%;
+        top: 10vh;
+    }
+}
+

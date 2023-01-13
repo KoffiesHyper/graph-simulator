@@ -6,7 +6,7 @@
     align-content: center;
     grid-template-columns: 1fr 3fr 1fr;
     grid-template-rows: 1fr;
-    transition-duration: .25s;
+    transition-duration: .15s;
 }
 
 .edge:hover{
@@ -44,7 +44,7 @@
 
 .highlighted{
     animation-name: highlight;
-    animation-duration: 0.5s;
+    animation-duration: 0.25s;
     animation-fill-mode: forwards;
     animation-iteration-count: 1;
 }
