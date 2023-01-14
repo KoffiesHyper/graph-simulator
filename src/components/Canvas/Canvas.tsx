@@ -10,7 +10,7 @@ import { focusEdge, showMessage } from '../../features/menu/menuSlice';
 import applyLongestPath from '../../algorithms/LongestPath';
 import applyConnectedComponents, { CCNode } from '../../algorithms/ConnectedComponents';
 import applyPrim from '../../algorithms/Prim';
-import applyBreadthFirstSearch from '../../algorithms/BreadthFirstSearch';
+import applyBreadthFirstSearch, { BFS_Node } from '../../algorithms/BreadthFirstSearch';
 
 const VIBRANT_COLORS = [
     "rgb(255, 0, 0)", "rgb(255, 153, 51)", "rgb(255, 255, 0)",
@@ -38,6 +38,8 @@ const Canvas = () => {
     const [path, setPath] = useState<any[]>([]);
     const [MST, setMST] = useState<EdgeType[]>([]);
     const [connectedComps, setConnectedComps] = useState<CCNode[]>([]);
+    const [animState, setAnimState] = useState<BFS_Node[]>([]);
+    const [animID, setAnimID] = useState<number>(0);
 
     useEffect(() => {
         window.addEventListener('mouseclick', handleClick);
@@ -55,8 +57,10 @@ const Canvas = () => {
         }
 
         if (selectedNodes.length === 2 && algorithm === 'bfs') {
-            const graph = applyBreadthFirstSearch(nodes, selectedNodes[0], selectedNodes[1]);
-            extractPath(graph, selectedNodes[1]);
+            const timeline = applyBreadthFirstSearch(nodes, selectedNodes[0], selectedNodes[1]);
+            setNewAnimID();
+            playTimeline(timeline, animID)
+            // extractPath(graph, selectedNodes[1]);
             setSelectedNodes([]);
         }
 
@@ -72,6 +76,7 @@ const Canvas = () => {
         setPath([]);
         setMST([]);
         setConnectedComps([]);
+        setAnimState([]);
 
         if (algorithm === 'kruskal') getKruskal();
         if (algorithm === 'prim') getPrim();
@@ -112,7 +117,7 @@ const Canvas = () => {
     const handleClick = (ev: any) => {
         if (!addingNode) return;
 
-        if(nodes.length === 26) {
+        if (nodes.length === 26) {
             dispatch(showMessage('Maximum number of nodes reached'))
             return;
         }
@@ -129,6 +134,17 @@ const Canvas = () => {
         }
 
         dispatch(addNode(pos));
+    }
+
+    const playTimeline = (timeline: BFS_Node[][], id: number) => {
+        for (let i = 0; i < timeline.length; i++) {
+            setTimeout(() => {
+                setAnimState(state => {
+                    if ((state.length === 0 && i > 0) || animID !== id) return state;
+                    return timeline[i]
+                });
+            }, 1000 * i)
+        }
     }
 
     const extractPath = (graph: any, finish: any) => {
@@ -159,12 +175,19 @@ const Canvas = () => {
         for (let i = 0; i < path.length; i++) {
             setTimeout(() => {
                 setPath(p => {
-                    if(p.length === 0 && i > 0) return [];
-                    if(i === 0) return [path[i]]
-                    return [...p, path[i]]; 
+                    if (p.length === 0 && i > 0) return [];
+                    if (i === 0) return [path[i]]
+                    return [...p, path[i]];
                 })
-            }, 500*i)
+            }, 500 * i)
         }
+    }
+
+    const setNewAnimID = () => {
+        let newID = Math.random() * 100;
+        while (newID === animID) newID = Math.random() * 100;
+
+        setAnimID(newID);
     }
 
     const isOnOtherNode = (pos: PositionType) => {
@@ -263,7 +286,8 @@ const Canvas = () => {
                 nodes.map(node => {
                     let color = nodeOnPath(node) ? 'rgb(0, 255, 0)' : 'rgb(255, 255, 255)';
                     if (connectedComps.length > 0) color = getNodeColor(node);
-                    return <Node key={node.label} node={node} color={color} selected={isSelected(node)} setSelectedNodes={setSelectedNodes} />
+                    const state = animState.find((n => n.label === node.label))?.state;
+                    return <Node key={node.label} node={node} color={color} selected={isSelected(node)} state={state} setSelectedNodes={setSelectedNodes} />
                 })
             }
         </>

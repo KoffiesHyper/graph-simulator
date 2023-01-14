@@ -9,10 +9,11 @@ type NodePropsType = {
     node: NodeType,
     color: string,
     selected: boolean,
+    state: string | undefined,
     setSelectedNodes: React.Dispatch<React.SetStateAction<NodeType[]>>
 }
 
-const Node = ({ node, color, selected, setSelectedNodes }: NodePropsType) => {
+const Node = ({ node, color, selected, state, setSelectedNodes }: NodePropsType) => {
     const dispatch = useAppDispatch();
 
     const connecting = useAppSelector(selectConnecting);
@@ -21,6 +22,31 @@ const Node = ({ node, color, selected, setSelectedNodes }: NodePropsType) => {
     const showDegrees = useAppSelector(selectDegrees);
     const edges = useAppSelector(selectEdges);
     const nodes = useAppSelector(selectNodes);
+
+    const [stateColor, setStateColor] = useState('');
+
+    useEffect(() => {
+        switch (state) {
+            case 'current':
+                setStateColor('red')
+                break;
+            case 'queued':
+                setStateColor('orange')
+                break;
+            case 'searched':
+                setStateColor('blue')
+                break;
+            case 'visited':
+                setStateColor('grey')
+                break;
+            case 'target':
+                setStateColor('gold')
+                break;
+            default:
+                setStateColor('')
+                break;
+        }
+    }, [state])
 
     const handleClick = (ev: any) => {
         // console.log(nodes)
@@ -45,7 +71,7 @@ const Node = ({ node, color, selected, setSelectedNodes }: NodePropsType) => {
         position: 'absolute',
         width: '47px',
         height: '47px',
-        backgroundColor: color,
+        backgroundColor: (stateColor.length > 0) ? stateColor : color,
         borderRadius: '50%',
         display: 'flex',
         justifyContent: 'center',
