@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './Canvas.css';
-import { addNode, createConnection, EdgeType, NodeType, selectAddingNode, selectAlgorithm, selectConnecting, selectDirected, selectEdges, selectNodes } from '../../features/graph/graphSlice';
+import { addNode, createConnection, EdgeType, NodeType, selectAddingNode, selectAlgorithm, selectConnecting, selectDirected, selectEdges, selectMoving, selectNodes, updateNodePosition } from '../../features/graph/graphSlice';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import Node from '../Node/Node';
 import Edge from '../Edge/Edge';
@@ -31,6 +31,7 @@ const Canvas = () => {
     const connecting = useAppSelector(selectConnecting);
     const algorithm = useAppSelector(selectAlgorithm);
     const directed = useAppSelector(selectDirected);
+    const moving = useAppSelector(selectMoving);
 
     const dispatch = useAppDispatch();
 
@@ -43,6 +44,7 @@ const Canvas = () => {
 
     useEffect(() => {
         window.addEventListener('mouseclick', handleClick);
+        window.addEventListener('mousemove', handleMove);
     }, []);
 
     useEffect(() => {
@@ -51,17 +53,21 @@ const Canvas = () => {
         }
 
         if (selectedNodes.length === 2 && algorithm === 'dijkstra') {
-            const graph = applyDijkstra(selectedNodes[0], selectedNodes[1], nodes, edges);
-            extractPath(graph, selectedNodes[1]);
-            setSelectedNodes([]);
+            setTimeout(() => {
+                const graph = applyDijkstra(selectedNodes[0], selectedNodes[1], nodes, edges);
+                extractPath(graph, selectedNodes[1]);
+                setSelectedNodes([]);
+            }, 500)
         }
 
         if (selectedNodes.length === 2 && algorithm === 'bfs') {
-            const timeline = applyBreadthFirstSearch(nodes, selectedNodes[0], selectedNodes[1]);
-            setNewAnimID();
-            playTimeline(timeline, animID)
-            // extractPath(graph, selectedNodes[1]);
-            setSelectedNodes([]);
+            setTimeout(() => {
+                setPath([]);
+                const timeline = applyBreadthFirstSearch(nodes, selectedNodes[0], selectedNodes[1]);
+                setNewAnimID();
+                playTimeline(timeline, animID)
+                setSelectedNodes([]);
+            }, 500)
         }
 
         if (selectedNodes.length === 2 && algorithm === 'longest_path') {
@@ -87,6 +93,10 @@ const Canvas = () => {
         if (algorithm === 'kruskal') getKruskal();
         if (algorithm === 'connected_components') getConnectedComponents();
     }, [nodes, edges]);
+
+    useEffect(() => {
+        if(moving)console.log('hy moet beweeg jong')
+    }, [moving])
 
     const nodeRadius = 25;
 
@@ -136,6 +146,12 @@ const Canvas = () => {
         dispatch(addNode(pos));
     }
 
+    const handleMove = (ev: any) => {
+        if (moving) {
+            dispatch(updateNodePosition([ev.clientX - nodeRadius, ev.clientY - nodeRadius]));
+        }
+    }
+
     const playTimeline = (timeline: BFS_Node[][], id: number) => {
         for (let i = 0; i < timeline.length; i++) {
             setTimeout(() => {
@@ -143,11 +159,17 @@ const Canvas = () => {
                     if ((state.length === 0 && i > 0) || animID !== id) return state;
                     return timeline[i]
                 });
-            }, 1000 * i)
+
+                if (i === timeline.length - 1) setTimeout(() => { extractPath(timeline.pop(), selectedNodes[1]) }, 1000);
+
+            }, 500 * i)
         }
     }
 
     const extractPath = (graph: any, finish: any) => {
+        setAnimState([]);
+        if (graph.length === 0) return;
+
         let currentLabel = finish.label;
         let path: string[] = [];
         let x = 0;
@@ -171,6 +193,8 @@ const Canvas = () => {
                 break;
             }
         }
+
+        // path.reverse();
 
         for (let i = 0; i < path.length; i++) {
             setTimeout(() => {
@@ -304,13 +328,13 @@ const Canvas = () => {
                                     if (node.label > neighbour.label && !directed)
                                         return <></>;
 
-
                                     return <Edge
                                         from={node}
-                                        to={neighbour}
+                                        to={nodes.find(n => n.label === neighbour.label)!}
                                         color={edgeOnPath(node, neighbour) || edgeOnKruskal(connectedNodes) ? 'rgb(0, 255, 0)' : 'rgb(255, 255, 255)'}
                                         connectedNodes={connectedNodes}
                                         key={connectedNodes}
+                                        animState={animState}
                                     />
                                 })
                             }
@@ -321,7 +345,7 @@ const Canvas = () => {
         </>
 
     return (
-        <div className="canvas" onClick={handleClick}>
+        <div className="canvas" onClick={handleClick} onMouseMove={handleMove}>
             {Nodes}
             {Edges}
         </div>

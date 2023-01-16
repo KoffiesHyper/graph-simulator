@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import './TopBar.css';
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { changeAlgorithm, selectConnecting, selectRemoving, selectAlgorithm, toggleConnecting, toggleRemoving, selectAddingNode, toggleAddNode, resetEdgeWeights, inverseGraph, toggleDirected, selectDirected, AlgorithmType } from "../../../features/graph/graphSlice";
-import { selectDegrees, selectWeighted, toggleDegrees, toggleWeighted } from "../../../features/menu/menuSlice";
+import { changeAlgorithm, selectConnecting, selectRemoving, selectAlgorithm, toggleConnecting, toggleRemoving, selectAddingNode, toggleAddNode, resetEdgeWeights, inverseGraph, toggleDirected, selectDirected, AlgorithmType, toggleMoving, changeMovingNode, selectMoving } from "../../../features/graph/graphSlice";
+import { selectDegrees, selectWeighted, showMessage, toggleDegrees, toggleWeighted } from "../../../features/menu/menuSlice";
 import { IoMdAddCircleOutline, IoMdSettings } from 'react-icons/io'
 import { SlGraph } from 'react-icons/sl'
 import { RiDeleteBin5Line } from 'react-icons/ri'
 import { FaCodeBranch } from 'react-icons/fa'
+import { FiMove } from 'react-icons/fi'
 import TopBarButton from "./TopBarButton";
 
 type ActionsType = {
@@ -23,6 +24,7 @@ const TopBar = () => {
     const weighted = useAppSelector(selectWeighted);
     const degrees = useAppSelector(selectDegrees);
     const directed = useAppSelector(selectDirected);
+    const moving = useAppSelector(selectMoving);
 
     const [actionExpanded, setActionExpanded] = useState(false);
     const [algoExpanded, setAlgoExpanded] = useState(false);
@@ -39,6 +41,7 @@ const TopBar = () => {
         dispatch(toggleAddNode(false));
         dispatch(toggleConnecting(false));
         dispatch(toggleRemoving(false));
+        dispatch(toggleMoving(false));
         dispatch(changeAlgorithm(undefined));
     }
 
@@ -52,15 +55,40 @@ const TopBar = () => {
         dispatch(toggleConnecting(!connecting));
     }
 
+    const handleMoveClick = () => {
+        disableAllActions();
+        dispatch(toggleMoving(true))
+    }
+
     const handleRemoveClick = () => {
         disableAllActions();
         dispatch(toggleRemoving(!removing));
     }
 
     const handleAlgorithmClick = (algorithm: AlgorithmType) => {
+        if (algorithm === 'bfs' && weighted) {
+            dispatch(showMessage('Breadth-first search only works with unweighted graphs.'))
+            return;
+        }
+
+        if ((algorithm === 'kruskal' || algorithm === 'prim') && directed) {
+            dispatch(showMessage(`${formalize(algorithm)}'s algorithm only works on undirected graphs.`))
+            return;
+        }
+
         disableAllActions();
         dispatch(changeAlgorithm(algorithm));
     }
+
+    // const handleMouseDown = (ev: any) => {
+    //     dispatch(changeMovingNode(ev?.target.firstChild!.textContent!));
+    //     console.log('down')
+    // }
+
+    // const handleMouseUp = (ev: any) => {
+    //     dispatch(changeMovingNode(''));
+    //     console.log('up')
+    // }
 
     const weightActionTitle = weighted ? 'switch_to_unweighted_graph' : 'switch_to_weighted_graph';
     const directedActionTitle = directed ? 'switch_to_undirected_graph' : 'switch_to_directed_graph';
@@ -98,6 +126,10 @@ const TopBar = () => {
             <button style={{ color: connecting ? 'lime' : 'white' }} onClick={handleConnectClick}>
                 <TopBarButton><SlGraph /></TopBarButton>
                 {connecting ? 'Adding Edge' : 'Add Edge'}
+            </button>
+            <button style={{ color: moving ? 'lime' : 'white' }} onClick={handleMoveClick}>
+                <TopBarButton><FiMove /></TopBarButton>
+                {moving ? 'Moving Node' : 'Move Node'}
             </button>
             <button style={{ color: removing ? 'lime' : 'white' }} onClick={handleRemoveClick}>
                 <TopBarButton><RiDeleteBin5Line /></TopBarButton>

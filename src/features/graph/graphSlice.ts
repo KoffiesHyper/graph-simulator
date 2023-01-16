@@ -25,7 +25,9 @@ export type GraphStateType = {
     algorithm: AlgorithmType,
     nextNodeLabel: string,
     edges: EdgeType[],
-    directed: boolean
+    directed: boolean,
+    moving: boolean,
+    movingNode: string
 }
 
 const initialState: GraphStateType = {
@@ -36,7 +38,9 @@ const initialState: GraphStateType = {
     algorithm: undefined,
     nextNodeLabel: 'A',
     edges: [],
-    directed: false
+    directed: false,
+    moving: false,
+    movingNode: ''
 }
 
 export const nodesSlice = createSlice({
@@ -97,17 +101,10 @@ export const nodesSlice = createSlice({
         },
         removeNode: (state, action: PayloadAction<string>) => {
             state.nodes.forEach((node, i) => {
-                if (node.label === action.payload) {
-                    state.nodes.splice(i, 1);
-                }
-                else {
-                    node.neighbours.forEach((neighbour, j) => {
-                        if (neighbour.label === action.payload) {
-                            state.nodes[i].neighbours.splice(j, 1);
-                        }
-                    })
-                }
+                node.neighbours = node.neighbours.filter(neighbour => neighbour.label !== action.payload);
             })
+
+            state.nodes = state.nodes.filter(node => node.label !== action.payload)
 
             state.edges.forEach((edge, i) => {
                 if (edge.connectedNodes.split("").includes(action.payload)) {
@@ -157,9 +154,9 @@ export const nodesSlice = createSlice({
         flipEdge: (state, action: PayloadAction<string>) => {
             const edge = state.edges.find(edge => edge.connectedNodes === action.payload);
             if (!edge) return;
-            
-            const fromNode = {...edge.from} as NodeType;
-            if(!fromNode) return;
+
+            const fromNode = { ...edge.from } as NodeType;
+            if (!fromNode) return;
 
             edge.from = edge.to;
             edge.to = fromNode;
@@ -167,8 +164,23 @@ export const nodesSlice = createSlice({
             const fromNodeIndex = state.nodes.findIndex(node => node.label === fromNode.label)!;
             state.nodes[fromNodeIndex].neighbours = state.nodes[fromNodeIndex].neighbours.filter(n => n.label !== edge.from?.label)!;
             state.nodes.find(node => node.label === edge.from?.label)?.neighbours.push(fromNode);
+        },
+        toggleMoving: (state, action: PayloadAction<boolean>) => {
+            state.moving = action.payload
+        },
+        changeMovingNode: (state, action: PayloadAction<string>) => {
+            state.movingNode = action.payload
+        },
+        updateNodePosition: (state, action: PayloadAction<number[]>) => {
+            if (action.payload.length !== 2) return;
+
+            const movingNode = state.nodes.find(node => node.label === state.movingNode);
+            if (movingNode) {
+                movingNode.x = action.payload[0];
+                movingNode.y = action.payload[1];
+            }
         }
-    }
+    },
 });
 
 export const {
@@ -184,7 +196,11 @@ export const {
     updateEdgeWeight,
     inverseGraph,
     resetEdgeWeights,
-    flipEdge
+    flipEdge,
+    toggleMoving,
+    changeMovingNode,
+    updateNodePosition
+
 } = nodesSlice.actions;
 
 export const selectNodes = (state: RootState) => state.graph.nodes;
@@ -194,5 +210,6 @@ export const selectConnecting = (state: RootState) => state.graph.connecting;
 export const selectRemoving = (state: RootState) => state.graph.removing;
 export const selectAlgorithm = (state: RootState) => state.graph.algorithm;
 export const selectDirected = (state: RootState) => state.graph.directed;
+export const selectMoving = (state: RootState) => state.graph.moving;
 
 export default nodesSlice.reducer;

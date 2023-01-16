@@ -32,14 +32,14 @@
 
 .edge .start{
     justify-self: flex-start;
-    border-top: 10px solid rgb(80, 80, 80);
-	border-bottom: 10px solid rgb(80, 80, 80);
+    border-top: 10px solid rgb(80, 80, 100);
+	border-bottom: 10px solid rgb(80, 80, 100);
 }
 
 .edge .end{
     justify-self: flex-end;
-    border-top: 10px solid rgb(80, 80, 80);
-	border-bottom: 10px solid rgb(80, 80, 80);
+    border-top: 10px solid rgb(80, 80, 100);
+	border-bottom: 10px solid rgb(80, 80, 100);
 }
 
 .highlighted{

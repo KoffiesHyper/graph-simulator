@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { selectConnecting, selectRemoving, removeNode, selectAlgorithm, selectEdges, selectNodes } from "../../features/graph/graphSlice";
+import { selectConnecting, selectRemoving, removeNode, selectAlgorithm, selectEdges, selectNodes, selectMoving, changeMovingNode } from "../../features/graph/graphSlice";
 import type { NodeType } from "../../features/graph/graphSlice";
 import './Node.css';
 import { selectDegrees } from "../../features/menu/menuSlice";
@@ -22,25 +22,26 @@ const Node = ({ node, color, selected, state, setSelectedNodes }: NodePropsType)
     const showDegrees = useAppSelector(selectDegrees);
     const edges = useAppSelector(selectEdges);
     const nodes = useAppSelector(selectNodes);
+    const moving = useAppSelector(selectMoving);
 
     const [stateColor, setStateColor] = useState('');
 
     useEffect(() => {
         switch (state) {
             case 'current':
-                setStateColor('red')
+                setStateColor('rgb(255, 0, 0)')
                 break;
             case 'queued':
-                setStateColor('orange')
+                setStateColor('rgb(255, 165, 0)')
                 break;
             case 'searched':
-                setStateColor('blue')
+                setStateColor('rgb(255, 255, 0)')
                 break;
             case 'visited':
-                setStateColor('grey')
+                setStateColor('rgb(128, 128, 128)')
                 break;
             case 'target':
-                setStateColor('gold')
+                setStateColor('rgb(0, 255, 0)')
                 break;
             default:
                 setStateColor('')
@@ -63,6 +64,18 @@ const Node = ({ node, color, selected, state, setSelectedNodes }: NodePropsType)
         }
     }
 
+    const handleMouseDown = () => {
+        if (!moving) return;
+        dispatch(changeMovingNode(node.label));
+    }
+
+    const handleMouseUp = () => {
+        if (!moving) return;
+        dispatch(changeMovingNode(''));
+    }
+
+    if(stateColor.length > 0) color = stateColor
+
     const shadowColor = `rgba(${color.substring(4, color.length - 1)}, 0.2)`;
 
     const nodeStyle: React.CSSProperties = {
@@ -77,12 +90,12 @@ const Node = ({ node, color, selected, state, setSelectedNodes }: NodePropsType)
         justifyContent: 'center',
         alignItems: 'center',
         zIndex: 10,
-        border: selected ? "3px solid white" : `3px solid ${color}`,
+        border: selected ? "3px solid white" : `3px solid ${(stateColor.length > 0) ? stateColor : color}`,
         boxShadow: `0 4px 8px 0 ${shadowColor}, 0 6px 20px 0 ${shadowColor}`,
     };
 
     return (
-        <div className='node' style={nodeStyle} onClick={handleClick}>
+        <div id='node' className='node' style={nodeStyle} onClick={handleClick} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}>
             <p style={{ fontSize: 20, color: 'rgb(80, 80, 80)', fontWeight: 'bold' }}>{node.label}</p>
             {showDegrees && <p className="degree">{node.neighbours.length}</p>}
             {selected && <div className="indicator"></div>}

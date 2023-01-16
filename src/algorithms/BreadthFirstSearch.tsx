@@ -13,34 +13,36 @@ let graph: BFS_Node[] = [];
 let queue: BFS_Node[] = [];
 
 const applyBreadthFirstSearch = (nodes: NodeType[], start: NodeType, finish: NodeType) => {
+    timeline = [];
     graph = [];
     queue = [];
 
     graph = nodes.map(node => { return { ...node, visited: false, previous: null, state: '' } });
 
-    timeline.push([...graph]);
+    saveState();
 
     let startNode = graph.find(node => node.label === start.label)!;
 
     queue.push(startNode);
-    changeState(startNode, 'queued')
+    changeState(startNode, 'queued', false)
 
     while (queue.length > 0) {
         for (let i = 0; i < queue.length; i++) {
-            changeState(queue[i], 'current');
+            changeState(queue[i], 'current', true);
             for (let j = 0; j < queue[i].neighbours.length; j++) {
 
                 if (!isVisited(queue[i].neighbours[j])) {
-
-                    changeState(queue[i].neighbours[j] as BFS_Node, 'searched');
+                    const originState = getNodeState(queue[i].neighbours[j])
+                    changeState(queue[i].neighbours[j] as BFS_Node, 'searched', true);
                     setPrev(queue[i].neighbours[j], queue[i]);
 
                     if (queue[i].neighbours[j].label === finish.label) {
-                        changeState(queue[i].neighbours[j] as BFS_Node, 'target');
+                        changeState(queue[i].neighbours[j] as BFS_Node, 'target', true);
                         return timeline
-                    } else changeState(queue[i].neighbours[j] as BFS_Node, '');
+                    } else changeState(queue[i].neighbours[j] as BFS_Node, originState, false);
                 }
             }
+            changeState(queue[i], 'visited', true);
         }
 
         const len = queue.length;
@@ -50,8 +52,10 @@ const applyBreadthFirstSearch = (nodes: NodeType[], start: NodeType, finish: Nod
             queue = [...queue, ...getNeighbours(queue[i])]
         }
 
+        saveState();
+
         for (let i = 0; i < len; i++) {
-            changeState(queue[i], 'visited');
+            changeState(queue[i], 'visited', false);
             queue.shift();
         }
     }
@@ -59,11 +63,22 @@ const applyBreadthFirstSearch = (nodes: NodeType[], start: NodeType, finish: Nod
     return timeline;
 }
 
-const changeState = (node: BFS_Node, state: NodeState) => {
+const getNodeState = (node: NodeType) => {
+    const index = graph.findIndex(n => n.label === node.label);
+    if(index > -1) return graph[index].state;
+    return '';
+}
+
+const saveState = () => {
+    timeline.push([...graph]);
+}
+
+const changeState = (node: BFS_Node, state: NodeState, save: boolean) => {
     let index = graph.findIndex(n => n.label === node.label);
     if (index !== -1) {
+        if(graph[index].state === 'visited') return;
         graph[index] = { ...graph[index], state };
-        timeline.push([...graph]);
+        if (save) timeline.push([...graph]);
     }
 }
 
@@ -97,7 +112,7 @@ const getNeighbours = (visitedNode: BFS_Node): BFS_Node[] => {
 
         if (!newNode.visited) {
             neighbours.push(newNode);
-            changeState(newNode, 'queued')
+            changeState(newNode, 'queued', false)
         }
     }
 

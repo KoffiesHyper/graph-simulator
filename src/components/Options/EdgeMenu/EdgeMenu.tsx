@@ -3,6 +3,8 @@ import "./EdgeMenu.css";
 import { disableEdgeMenu, selectFocusedEdge, selectWeighted } from "../../../features/menu/menuSlice";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { EdgeType, flipEdge, removeEdge, removeNode, selectDirected, updateEdgeWeight } from "../../../features/graph/graphSlice";
+import { IconContext } from "react-icons";
+import { SlGraph } from "react-icons/sl";
 
 const EdgeMenu = () => {
 
@@ -31,8 +33,11 @@ const EdgeMenu = () => {
 
     return (
         <div className="edge-menu">
-            <h1>Edge Settings</h1>
-            <h3>Connected Nodes: <span style={{ fontWeight: 'lighter' }}>{`${focusedEdge?.connectedNodes.charAt(0)} <-> ${focusedEdge?.connectedNodes.charAt(1)}`}</span></h3>
+            <div className="heading">
+                <div className="heading-icon"><IconContext.Provider value={{color: 'white', size: '25px'}}><SlGraph /></IconContext.Provider></div>
+                <h1>Edge Settings</h1>
+            </div>
+            <h3>Connected Nodes: <span style={{ fontWeight: 'lighter' }}>{`${focusedEdge?.connectedNodes.charAt(0)} - ${focusedEdge?.connectedNodes.charAt(1)}`}</span></h3>
             <div className="weight">
                 <h3>Weight:</h3>
                 <input disabled={!weighted} type='number' min='1' onChange={handleChange} />

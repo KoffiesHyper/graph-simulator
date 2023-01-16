@@ -21,21 +21,7 @@
     height: 100%;
     background-color: transparent;
     border-radius: 50%;
-    border: 3px dashed rgb(0, 183, 255);
-    animation-name: spin;
-    animation-duration: 5s;
-    animation-iteration-count: infinite;
-    animation-timing-function: linear;
+    border: 3px solid rgb(0, 183, 255);
     box-shadow: 0 0 0.5em rgb(0, 183, 255);
-}
-
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
-        transform: rotate(360deg);
-    }
 }
 
