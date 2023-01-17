@@ -11,6 +11,7 @@ import applyLongestPath from '../../algorithms/LongestPath';
 import applyConnectedComponents, { CCNode } from '../../algorithms/ConnectedComponents';
 import applyPrim from '../../algorithms/Prim';
 import applyBreadthFirstSearch, { BFS_Node } from '../../algorithms/BreadthFirstSearch';
+import applyBellmanFord from '../../algorithms/BellmanFord';
 
 const VIBRANT_COLORS = [
     "rgb(255, 0, 0)", "rgb(255, 153, 51)", "rgb(255, 255, 0)",
@@ -72,7 +73,6 @@ const Canvas = () => {
 
         if (selectedNodes.length === 2 && algorithm === 'longest_path') {
             const graph = applyLongestPath(selectedNodes[0], selectedNodes[1], nodes, edges);
-            console.log(graph)
             extractPath(graph, selectedNodes[1]);
             setSelectedNodes([]);
         }
@@ -87,16 +87,14 @@ const Canvas = () => {
         if (algorithm === 'kruskal') getKruskal();
         if (algorithm === 'prim') getPrim();
         if (algorithm === 'connected_components') getConnectedComponents();
+
+        if (algorithm === 'bellman_ford') getBellmanFord();
     }, [algorithm]);
 
     useEffect(() => {
         if (algorithm === 'kruskal') getKruskal();
         if (algorithm === 'connected_components') getConnectedComponents();
     }, [nodes, edges]);
-
-    useEffect(() => {
-        if(moving)console.log('hy moet beweeg jong')
-    }, [moving])
 
     const nodeRadius = 25;
 
@@ -285,6 +283,11 @@ const Canvas = () => {
         setConnectedComps(CC_Graph);
     }
 
+    const getBellmanFord = () => {
+        const s = applyBellmanFord(nodes[0], nodes, edges, directed);
+        console.log(s)
+    }
+
     const getNodeColor = (node: NodeType) => {
         const CC_Node = connectedComps.find(comp => comp.label === node.label);
 
@@ -298,10 +301,6 @@ const Canvas = () => {
         }
 
         return false;
-    }
-
-    const getBFS = () => {
-
     }
 
     const Nodes: React.ReactNode =

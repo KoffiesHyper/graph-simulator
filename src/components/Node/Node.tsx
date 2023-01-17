@@ -50,7 +50,7 @@ const Node = ({ node, color, selected, state, setSelectedNodes }: NodePropsType)
     }, [state])
 
     const handleClick = (ev: any) => {
-        // console.log(nodes)
+        console.log(edges)
         if (connecting) {
             setSelectedNodes(nodes => [...nodes, node]);
         }

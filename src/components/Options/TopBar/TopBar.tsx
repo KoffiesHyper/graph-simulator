@@ -101,7 +101,8 @@ const TopBar = () => {
         prim: () => handleAlgorithmClick('prim'),
         longest_path: () => handleAlgorithmClick('longest_path'),
         connected_components: () => handleAlgorithmClick('connected_components'),
-        breadth_first_search: () => handleAlgorithmClick('bfs')
+        breadth_first_search: () => handleAlgorithmClick('bfs'),
+        bellman_ford: () => handleAlgorithmClick('bellman_ford')
     }
 
     const otherActions: ActionsType = {

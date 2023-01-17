@@ -36,10 +36,6 @@ const Edge = ({ from, to, color, connectedNodes, animState }: EdgePropsType) => 
         else setStateColor('');
     }, [animState])
 
-    useEffect(() => {
-        console.log(connectedNodes)
-    }, [from.x, to.x])
-
     const width = Math.sqrt(Math.pow(from.x! - to.x!, 2) + Math.pow(from.y! - to.y!, 2));
     const height = 5;
 
@@ -48,7 +44,7 @@ const Edge = ({ from, to, color, connectedNodes, animState }: EdgePropsType) => 
     const m = deltaY / deltaX;
     let angle = Math.atan(m);
 
-    if (angle < 0) angle = angle + Math.PI;
+    // if (angle < 0) angle = angle + Math.PI;
 
     const shadowColor = `rgba(${color!.substring(4, color!.length - 1)}, 0.2)`;
 
