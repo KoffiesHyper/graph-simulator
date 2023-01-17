@@ -79,29 +79,20 @@ const TopBar = () => {
         disableAllActions();
         dispatch(changeAlgorithm(algorithm));
     }
-
-    // const handleMouseDown = (ev: any) => {
-    //     dispatch(changeMovingNode(ev?.target.firstChild!.textContent!));
-    //     console.log('down')
-    // }
-
-    // const handleMouseUp = (ev: any) => {
-    //     dispatch(changeMovingNode(''));
-    //     console.log('up')
-    // }
-
+    
     const weightActionTitle = weighted ? 'switch_to_unweighted_graph' : 'switch_to_weighted_graph';
     const directedActionTitle = directed ? 'switch_to_undirected_graph' : 'switch_to_directed_graph';
     const degreesTitle = degrees ? 'hide_degrees' : 'show_degrees';
     const invertTitle = 'convert_to_inverse_graph';
 
     const algoActions: ActionsType = {
+        breadth_first_search: () => handleAlgorithmClick('bfs'),
+        depth_first_search: () => handleAlgorithmClick('dfs'),
         dijkstra: () => handleAlgorithmClick('dijkstra'),
         kruskal: () => handleAlgorithmClick('kruskal'),
         prim: () => handleAlgorithmClick('prim'),
         longest_path: () => handleAlgorithmClick('longest_path'),
         connected_components: () => handleAlgorithmClick('connected_components'),
-        breadth_first_search: () => handleAlgorithmClick('bfs'),
         bellman_ford: () => handleAlgorithmClick('bellman_ford')
     }
 

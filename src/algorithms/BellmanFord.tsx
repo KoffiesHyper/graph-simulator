@@ -1,7 +1,7 @@
 import { EdgeType, NodeType } from "../features/graph/graphSlice";
 
 interface BF_Node extends NodeType {
-    prev: NodeType | undefined,
+    previous: NodeType | undefined,
     dist: number
 }
 
@@ -11,9 +11,8 @@ let sortedEdgeLabels: string[] = []
 const applyBellmanFord = (startNode: NodeType, nodes: NodeType[], edges: EdgeType[], directed: boolean) => {
     sortedEdgeLabels = [];
     orderEdges(startNode, nodes);
-    console.log(sortedEdgeLabels);
 
-    graph = nodes.map(node => { return { ...node, prev: undefined, dist: (node.label === startNode.label) ? 0 : Infinity } })
+    graph = nodes.map(node => { return { ...node, previous: undefined, dist: (node.label === startNode.label) ? 0 : Infinity } })
 
     for (let i = 0; i < nodes.length - 1; i++) {
         for (let j = 0; j < sortedEdgeLabels.length; j++) {
@@ -41,7 +40,7 @@ const relaxEdge = (connectedNodes: string, nodes: NodeType[], edges: EdgeType[],
     if(graph[fromIndex].dist + edge.weight < graph[toIndex].dist){
         if(connectedNodes.includes('F')) console.log('nice')
         graph[toIndex].dist = graph[fromIndex].dist + edge.weight;
-        graph[toIndex].prev = edge.from;
+        graph[toIndex].previous = edge.from;
     }
 }
 

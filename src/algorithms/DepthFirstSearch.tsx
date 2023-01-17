@@ -1,18 +1,32 @@
 import { NodeType } from "../features/graph/graphSlice";
 
-interface DPS_Node extends NodeType {
-    visited: boolean
+type NodeState = string;
+
+export interface DPS_Node extends NodeType {
+    visited: boolean,
+    state: NodeState,
+    previous: null
 }
 
 let DPSGraph: DPS_Node[] = [];
+let timeline: DPS_Node[][] = [];
 
-const applyDPS = (graph: NodeType[]) => {
+const applyDPS = (startNode: NodeType, graph: NodeType[]) => {
+    timeline = [];
+
     if (graph.length === 0) return undefined;
 
-    DPSGraph = graph.map((e) => { return { ...e, visited: false } as DPS_Node });
-    DPS(DPSGraph[0]);
+    DPSGraph = graph.map((e) => { return { ...e, visited: false, state: '', previous: null } as DPS_Node });
+    DPS(DPSGraph.find(node => node.label === startNode.label)!);
 
-    return DPSGraph
+    return timeline
+}
+
+const changeState = (node: DPS_Node, state: NodeState, save: boolean) => {
+    const nodeIndex = DPSGraph.findIndex(n => n.label === node.label);
+    if (nodeIndex === -1) return;
+    DPSGraph[nodeIndex] = {...DPSGraph[nodeIndex], state};
+    if (save) timeline.push([...DPSGraph])
 }
 
 export const isConnected = (graph: NodeType[]) => {
@@ -30,9 +44,13 @@ const DPS = (node: DPS_Node) => {
 
     node.visited = true;
 
+    changeState(node, 'visiting', true)
+
     for (let i = 0; i < node.neighbours.length; i++) {
         DPS(DPSGraph.find(e => e.label === node.neighbours[i].label)!);
     }
+
+    changeState(node, 'visited', true)
 }
 
 

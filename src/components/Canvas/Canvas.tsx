@@ -12,6 +12,7 @@ import applyConnectedComponents, { CCNode } from '../../algorithms/ConnectedComp
 import applyPrim from '../../algorithms/Prim';
 import applyBreadthFirstSearch, { BFS_Node } from '../../algorithms/BreadthFirstSearch';
 import applyBellmanFord from '../../algorithms/BellmanFord';
+import applyDPS from '../../algorithms/DepthFirstSearch';
 
 const VIBRANT_COLORS = [
     "rgb(255, 0, 0)", "rgb(255, 153, 51)", "rgb(255, 255, 0)",
@@ -49,6 +50,15 @@ const Canvas = () => {
     }, []);
 
     useEffect(() => {
+        if(selectedNodes.length == 1 && algorithm === 'dfs') {
+            setTimeout(() => {
+                const timeline = applyDPS(selectedNodes[0], nodes)!;
+                setNewAnimID();
+                playTimeline(timeline, animID)
+                setSelectedNodes([]);
+            }, 500)
+        }
+
         if (selectedNodes.length === 2 && connecting) {
             handleNewConnection();
         }
@@ -76,6 +86,12 @@ const Canvas = () => {
             extractPath(graph, selectedNodes[1]);
             setSelectedNodes([]);
         }
+
+        if (selectedNodes.length === 2 && algorithm === 'bellman_ford') {
+            const graph = applyBellmanFord(selectedNodes[0], nodes, edges, directed);
+            extractPath(graph, selectedNodes[1]);
+            setSelectedNodes([]);
+        }
     }, [selectedNodes]);
 
     useEffect(() => {
@@ -86,9 +102,7 @@ const Canvas = () => {
 
         if (algorithm === 'kruskal') getKruskal();
         if (algorithm === 'prim') getPrim();
-        if (algorithm === 'connected_components') getConnectedComponents();
-
-        if (algorithm === 'bellman_ford') getBellmanFord();
+        if (algorithm === 'connected_components') getConnectedComponents();        
     }, [algorithm]);
 
     useEffect(() => {

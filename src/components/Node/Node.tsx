@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { selectConnecting, selectRemoving, removeNode, selectAlgorithm, selectEdges, selectNodes, selectMoving, changeMovingNode } from "../../features/graph/graphSlice";
+import { selectConnecting, selectRemoving, removeNode, selectAlgorithm, selectEdges, selectNodes, selectMoving, changeMovingNode, selectMovingNode } from "../../features/graph/graphSlice";
 import type { NodeType } from "../../features/graph/graphSlice";
 import './Node.css';
 import { selectDegrees } from "../../features/menu/menuSlice";
@@ -23,6 +23,7 @@ const Node = ({ node, color, selected, state, setSelectedNodes }: NodePropsType)
     const edges = useAppSelector(selectEdges);
     const nodes = useAppSelector(selectNodes);
     const moving = useAppSelector(selectMoving);
+    const movingNode = useAppSelector(selectMovingNode);
 
     const [stateColor, setStateColor] = useState('');
 
@@ -43,6 +44,9 @@ const Node = ({ node, color, selected, state, setSelectedNodes }: NodePropsType)
             case 'target':
                 setStateColor('rgb(0, 255, 0)')
                 break;
+            case 'visiting':
+                setStateColor('rgb(255, 165, 0)')
+                break;
             default:
                 setStateColor('')
                 break;
@@ -50,7 +54,6 @@ const Node = ({ node, color, selected, state, setSelectedNodes }: NodePropsType)
     }, [state])
 
     const handleClick = (ev: any) => {
-        console.log(edges)
         if (connecting) {
             setSelectedNodes(nodes => [...nodes, node]);
         }
@@ -59,7 +62,7 @@ const Node = ({ node, color, selected, state, setSelectedNodes }: NodePropsType)
             dispatch(removeNode(node.label));
         }
 
-        if (algorithm === 'dijkstra' || algorithm === 'longest_path' || algorithm === 'bfs') {
+        if (algorithm === 'dijkstra' || algorithm === 'longest_path' || algorithm === 'bfs' || algorithm === 'bellman_ford' || algorithm === 'dfs') {
             setSelectedNodes(nodes => [...nodes, node]);
         }
     }
@@ -74,9 +77,11 @@ const Node = ({ node, color, selected, state, setSelectedNodes }: NodePropsType)
         dispatch(changeMovingNode(''));
     }
 
-    if(stateColor.length > 0) color = stateColor
+    if (stateColor.length > 0) color = stateColor
 
     const shadowColor = `rgba(${color.substring(4, color.length - 1)}, 0.2)`;
+
+    if (movingNode === node.label) color = `rgb(200, 200, 200)`;
 
     const nodeStyle: React.CSSProperties = {
         left: node.x! - 3,
@@ -92,6 +97,7 @@ const Node = ({ node, color, selected, state, setSelectedNodes }: NodePropsType)
         zIndex: 10,
         border: selected ? "3px solid white" : `3px solid ${(stateColor.length > 0) ? stateColor : color}`,
         boxShadow: `0 4px 8px 0 ${shadowColor}, 0 6px 20px 0 ${shadowColor}`,
+        cursor: (movingNode === node.label && moving) ? 'grabbing' : ((moving) ? 'grab' : 'cursor')
     };
 
     return (

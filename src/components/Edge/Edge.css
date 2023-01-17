@@ -6,7 +6,7 @@
     align-content: center;
     grid-template-columns: 1fr 3fr 1fr;
     grid-template-rows: 1fr;
-    transition-duration: .15s;
+    /* transition-duration: .15s; */
 }
 
 .edge:hover{

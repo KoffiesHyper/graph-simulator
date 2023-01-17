@@ -166,7 +166,8 @@ export const nodesSlice = createSlice({
             state.nodes.find(node => node.label === edge.from?.label)?.neighbours.push(fromNode);
         },
         toggleMoving: (state, action: PayloadAction<boolean>) => {
-            state.moving = action.payload
+            state.moving = action.payload;
+            state.movingNode = '';
         },
         changeMovingNode: (state, action: PayloadAction<string>) => {
             state.movingNode = action.payload
@@ -211,5 +212,6 @@ export const selectRemoving = (state: RootState) => state.graph.removing;
 export const selectAlgorithm = (state: RootState) => state.graph.algorithm;
 export const selectDirected = (state: RootState) => state.graph.directed;
 export const selectMoving = (state: RootState) => state.graph.moving;
+export const selectMovingNode = (state: RootState) => state.graph.movingNode;
 
 export default nodesSlice.reducer;

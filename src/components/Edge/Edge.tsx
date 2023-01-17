@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import './Edge.css';
-import { NodeType, removeEdge, selectDirected, selectEdges, selectRemoving } from "../../features/graph/graphSlice";
+import { NodeType, removeEdge, selectAlgorithm, selectDirected, selectEdges, selectRemoving } from "../../features/graph/graphSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { focusEdge, selectWeighted } from "../../features/menu/menuSlice";
 import { BFS_Node } from "../../algorithms/BreadthFirstSearch";
+import { DPS_Node } from "../../algorithms/DepthFirstSearch";
 
 type EdgePropsType = {
     from: NodeType,
@@ -17,7 +18,8 @@ const Edge = ({ from, to, color, connectedNodes, animState }: EdgePropsType) => 
     const edges = useAppSelector(selectEdges);
     const weighted = useAppSelector(selectWeighted);
     const directed = useAppSelector(selectDirected);
-    const removing = useAppSelector(selectRemoving)
+    const removing = useAppSelector(selectRemoving);
+    const algorithm = useAppSelector(selectAlgorithm);
     const dispatch = useAppDispatch();
 
     const [stateColor, setStateColor] = useState('');
@@ -44,7 +46,7 @@ const Edge = ({ from, to, color, connectedNodes, animState }: EdgePropsType) => 
     const m = deltaY / deltaX;
     let angle = Math.atan(m);
 
-    // if (angle < 0) angle = angle + Math.PI;
+    // if (angle < 0) angle = Math - angle;
 
     const shadowColor = `rgba(${color!.substring(4, color!.length - 1)}, 0.2)`;
 

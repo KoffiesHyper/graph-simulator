@@ -23,6 +23,19 @@ const applyConnectedComponents = (graph: NodeType[]) => {
     return CC_Graph;
 }
 
+export const checkOrderIsomorphism = (graph: NodeType[]): string => {
+    const connectedComps = applyConnectedComponents(graph);
+
+    const graph1 = connectedComps.filter(node => node.group === 0);
+    const graph2 = connectedComps.filter(node => node.group === 1);
+
+    if (graph1.length + graph2.length !== connectedComps.length) return 'not_two_graphs';
+
+    let sameNumNodes = graph.length === graph2.length;
+
+    same
+}
+
 const DPS = (node: CCNode) => {
     if (node.visited) return;
 

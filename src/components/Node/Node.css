@@ -1,3 +1,7 @@
+.node p::selection{
+    background-color: transparent;
+}
+
 .degree {
     position: absolute;
     left: 25px;

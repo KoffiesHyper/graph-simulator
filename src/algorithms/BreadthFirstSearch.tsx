@@ -1,6 +1,6 @@
 import { NodeType } from "../features/graph/graphSlice";
 
-type NodeState = 'current' | 'queued' | 'visited' | 'searched' | 'target' | '';
+type NodeState = string;
 
 export interface BFS_Node extends NodeType {
     visited: boolean,
