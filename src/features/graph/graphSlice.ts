@@ -15,7 +15,18 @@ export type EdgeType = {
     to?: NodeType
 }
 
-export type AlgorithmType = undefined | 'bfs' | 'dfs' | 'dijkstra' | 'kruskal' | 'prim' | 'longest_path' | 'connected_components' | 'bellman_ford';
+export type AlgorithmType =
+    undefined |
+    'bfs' |
+    'dfs' |
+    'dijkstra' |
+    'kruskal' |
+    'prim' |
+    'longest_path' |
+    'connected_components' |
+    'bellman_ford' |
+    'eulerian_path' |
+    'eulerian_circuit' 
 
 export type GraphStateType = {
     nodes: NodeType[],

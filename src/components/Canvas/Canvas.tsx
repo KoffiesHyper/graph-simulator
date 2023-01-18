@@ -13,6 +13,7 @@ import applyPrim from '../../algorithms/Prim';
 import applyBreadthFirstSearch, { BFS_Node } from '../../algorithms/BreadthFirstSearch';
 import applyBellmanFord from '../../algorithms/BellmanFord';
 import applyDPS from '../../algorithms/DepthFirstSearch';
+import applyEulerPath from '../../algorithms/Euler';
 
 const VIBRANT_COLORS = [
     "rgb(255, 0, 0)", "rgb(255, 153, 51)", "rgb(255, 255, 0)",
@@ -102,7 +103,9 @@ const Canvas = () => {
 
         if (algorithm === 'kruskal') getKruskal();
         if (algorithm === 'prim') getPrim();
-        if (algorithm === 'connected_components') getConnectedComponents();        
+        if (algorithm === 'connected_components') getConnectedComponents(); 
+        if (algorithm === 'eulerian_path') getEulerPath();   
+        if (algorithm === 'eulerian_circuit') getEulerCircuit();  
     }, [algorithm]);
 
     useEffect(() => {
@@ -297,9 +300,32 @@ const Canvas = () => {
         setConnectedComps(CC_Graph);
     }
 
-    const getBellmanFord = () => {
-        const s = applyBellmanFord(nodes[0], nodes, edges, directed);
-        console.log(s)
+    const getEulerPath = () => {
+        const path = applyEulerPath(nodes, directed, false);
+
+        if (path.length <= 0) { dispatch(showMessage('No Eulerian path found.')); return; }
+
+        for (let i = 0; i < path.length; i++) {
+            setTimeout(() => {
+                setPath(p => {
+                    return [...p, path[i]]
+                })
+            }, 500 * i)
+        }
+    }
+
+    const getEulerCircuit = () => {
+        const path = applyEulerPath(nodes, directed, true);
+
+        if (path.length <= 0) { dispatch(showMessage('No Eulerian circuit found.')); return; }
+
+        for (let i = 0; i < path.length; i++) {
+            setTimeout(() => {
+                setPath(p => {
+                    return [...p, path[i]]
+                })
+            }, 500 * i)
+        }
     }
 
     const getNodeColor = (node: NodeType) => {

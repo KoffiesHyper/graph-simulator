@@ -6,22 +6,34 @@ import { IconContext } from "react-icons";
 import { MdErrorOutline } from 'react-icons/md';
 
 const PopUp = () => {
-    const message = useAppSelector(selectMessage);
+    let message = useAppSelector(selectMessage);
     const dispatch = useAppDispatch();
 
     setTimeout(() => {
         dispatch(showMessage(null));
-    }, 5000)
+    }, 3000)
+
+    let styles: React.CSSProperties = {}
+
+    if (message?.includes('info-')) {
+        message = message.substring(5);
+        styles.backgroundColor = 'rgb(0, 0, 90)'
+        styles.border = '1px solid rgb(0, 0, 90)'
+        styles.boxShadow = 'inset 0 0 0.25em rgba(0, 0, 90, 0.75), 0 0 0.25em rgba(0, 0, 90, 0.75)'
+        styles.color = 'white'
+    }
+
+    const isInfo: boolean = styles.color ? true : false;
 
     return (
         <>
-            <div className="pop-up">
+            <div style={styles} className="pop-up">
                 <div className="error-icon">
-                    <IconContext.Provider value={{ color: 'red', size: '25px' }}>
+                    <IconContext.Provider value={{ color: 'white', size: '25px' }}>
                         <MdErrorOutline />
                     </IconContext.Provider>
                 </div>
-                <span style={{ fontWeight: 'bold', paddingRight: '6px' }}>Error: </span> {message}
+                <span style={{ fontWeight: 'bold', paddingRight: '6px' }}>{isInfo ? 'Info:' : 'Error:'} </span> {message}
             </div>
         </>
     )

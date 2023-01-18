@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import './TopBar.css';
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { changeAlgorithm, selectConnecting, selectRemoving, selectAlgorithm, toggleConnecting, toggleRemoving, selectAddingNode, toggleAddNode, resetEdgeWeights, inverseGraph, toggleDirected, selectDirected, AlgorithmType, toggleMoving, changeMovingNode, selectMoving } from "../../../features/graph/graphSlice";
+import { changeAlgorithm, selectConnecting, selectRemoving, selectAlgorithm, toggleConnecting, toggleRemoving, selectAddingNode, toggleAddNode, resetEdgeWeights, inverseGraph, toggleDirected, selectDirected, AlgorithmType, toggleMoving, changeMovingNode, selectMoving, selectNodes } from "../../../features/graph/graphSlice";
 import { selectDegrees, selectWeighted, showMessage, toggleDegrees, toggleWeighted } from "../../../features/menu/menuSlice";
 import { IoMdAddCircleOutline, IoMdSettings } from 'react-icons/io'
 import { SlGraph } from 'react-icons/sl'
@@ -9,6 +9,7 @@ import { RiDeleteBin5Line } from 'react-icons/ri'
 import { FaCodeBranch } from 'react-icons/fa'
 import { FiMove } from 'react-icons/fi'
 import TopBarButton from "./TopBarButton";
+import { checkOrderIsomorphism } from "../../../algorithms/ConnectedComponents";
 
 type ActionsType = {
     [index: string]: () => void
@@ -25,6 +26,7 @@ const TopBar = () => {
     const degrees = useAppSelector(selectDegrees);
     const directed = useAppSelector(selectDirected);
     const moving = useAppSelector(selectMoving);
+    const nodes = useAppSelector(selectNodes);
 
     const [actionExpanded, setActionExpanded] = useState(false);
     const [algoExpanded, setAlgoExpanded] = useState(false);
@@ -76,14 +78,36 @@ const TopBar = () => {
             return;
         }
 
+        if ((algorithm === 'longest_path') && !directed) {
+            dispatch(showMessage(`The ${formalize(algorithm)} algorithm only works on directed graphs.`))
+            return;
+        }
+
         disableAllActions();
         dispatch(changeAlgorithm(algorithm));
     }
-    
+
+    const handleIsomorphism = () => {
+        const result = checkOrderIsomorphism(nodes);
+
+        switch (result) {
+            case 'not_two_graphs':
+                dispatch(showMessage('There are not two seperate graphs.'))
+                break;
+            case 'not_isomorphic':
+                dispatch(showMessage('info-The graphs are not isomorphic.'))
+                break;
+            case 'is_isomorphic':
+                dispatch(showMessage('info-The graphs are isomorphic.'))
+                break;
+        }
+    }
+
     const weightActionTitle = weighted ? 'switch_to_unweighted_graph' : 'switch_to_weighted_graph';
     const directedActionTitle = directed ? 'switch_to_undirected_graph' : 'switch_to_directed_graph';
     const degreesTitle = degrees ? 'hide_degrees' : 'show_degrees';
     const invertTitle = 'convert_to_inverse_graph';
+    const isomorphismTitle = 'check_isomorphism';
 
     const algoActions: ActionsType = {
         breadth_first_search: () => handleAlgorithmClick('bfs'),
@@ -93,14 +117,17 @@ const TopBar = () => {
         prim: () => handleAlgorithmClick('prim'),
         longest_path: () => handleAlgorithmClick('longest_path'),
         connected_components: () => handleAlgorithmClick('connected_components'),
-        bellman_ford: () => handleAlgorithmClick('bellman_ford')
+        bellman_ford: () => handleAlgorithmClick('bellman_ford'),
+        eulerian_path: () => handleAlgorithmClick('eulerian_path'),
+        eulerian_circuit: () => handleAlgorithmClick('eulerian_circuit')
     }
 
     const otherActions: ActionsType = {
         [weightActionTitle]: () => { dispatch(toggleWeighted(!weighted)); dispatch(resetEdgeWeights()) },
         [directedActionTitle]: () => { dispatch(toggleDirected()) },
         [degreesTitle]: () => dispatch(toggleDegrees()),
-        [invertTitle]: () => dispatch(inverseGraph())
+        [invertTitle]: () => dispatch(inverseGraph()),
+        [isomorphismTitle]: () => handleIsomorphism()
     }
 
     const formalize = (text: string) => {
