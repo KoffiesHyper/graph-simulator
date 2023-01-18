@@ -3,12 +3,18 @@ import { NodeType } from "../features/graph/graphSlice";
 let outArray: number[] = [];
 let path: string[] = [];
 
+let dir = false;
+let visitedEdges: string[] = []
+
 const applyEulerPath = (nodes: NodeType[], directed: boolean, circuit: boolean) => {
     if (!hasEulerianPath(nodes, directed)) return [];
     if (circuit && !hasEulerianCircuit(nodes, directed)) return [];
 
+    dir = directed;
+
     outArray = nodes.map(node => node.neighbours.length);
     path = [];
+    visitedEdges = [];
 
     DFS(getStartingNode(nodes), nodes);
 
@@ -16,11 +22,15 @@ const applyEulerPath = (nodes: NodeType[], directed: boolean, circuit: boolean) 
 }
 
 const DFS = (node: NodeType, nodes: NodeType[]) => {
-    console.log(node)
     let index = nodes.findIndex(n => n.label === node.label);
 
     while (outArray[index] > 0) {
-        DFS(getNeighbour(node.neighbours[--outArray[index]], nodes)!, nodes);
+        let connectedNodes = [node.label, node.neighbours[outArray[index] - 1]].sort().join('');
+        if (!dir && visitedEdges.includes(connectedNodes)) { --outArray[index]; continue }
+        else {
+            visitedEdges.push(connectedNodes)
+            DFS(getNeighbour(node.neighbours[--outArray[index]], nodes)!, nodes);
+        }
     }
 
     path = [node.label, ...path];
