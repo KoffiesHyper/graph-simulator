@@ -101,7 +101,7 @@ const Node = ({ node, color, selected, state, setSelectedNodes }: NodePropsType)
     };
 
     return (
-        <div id='node' className={`node ${color === 'rgb(255, 255, 255)' ? '' : 'highlighted'}`} style={nodeStyle} onClick={handleClick} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}>
+        <div id='node' className={`node ${color === 'rgb(255, 255, 255)' ? 'plotted' : 'highlighted'}`} style={nodeStyle} onClick={handleClick} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}>
             <p style={{ fontSize: 20, color: 'rgb(80, 80, 80)', fontWeight: 'bold' }}>{node.label}</p>
             {showDegrees && <p className="degree">{node.neighbours.length}</p>}
             {selected && <div className="indicator"></div>}

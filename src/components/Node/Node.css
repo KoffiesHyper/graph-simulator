@@ -29,10 +29,34 @@
     box-shadow: 0 0 0.5em rgb(0, 183, 255);
 }
 
-.highlighted {
+.node.highlighted {
     animation-name: bop;
     animation-duration: 0.15s;
     animation-fill-mode: forwards;
+}
+
+.node.plotted {
+    animation-name: plot;
+    animation-duration: 0.15s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes plot {
+    0% {
+        transform: scale(1);
+    }
+
+    20% {
+        transform: scale(.9);
+    }
+
+    75% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
 }
 
 @keyframes bop {
