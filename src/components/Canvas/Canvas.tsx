@@ -51,7 +51,7 @@ const Canvas = () => {
     }, []);
 
     useEffect(() => {
-        if(selectedNodes.length == 1 && algorithm === 'dfs') {
+        if (selectedNodes.length == 1 && algorithm === 'dfs') {
             setTimeout(() => {
                 const timeline = applyDPS(selectedNodes[0], nodes)!;
                 setNewAnimID();
@@ -103,9 +103,9 @@ const Canvas = () => {
 
         if (algorithm === 'kruskal') getKruskal();
         if (algorithm === 'prim') getPrim();
-        if (algorithm === 'connected_components') getConnectedComponents(); 
-        if (algorithm === 'eulerian_path') getEulerPath();   
-        if (algorithm === 'eulerian_circuit') getEulerCircuit();  
+        if (algorithm === 'connected_components') getConnectedComponents();
+        if (algorithm === 'eulerian_path') getEulerPath();
+        if (algorithm === 'eulerian_circuit') getEulerCircuit();
     }, [algorithm]);
 
     useEffect(() => {
@@ -171,6 +171,7 @@ const Canvas = () => {
         for (let i = 0; i < timeline.length; i++) {
             setTimeout(() => {
                 setAnimState(state => {
+                    // console.log(timeline[i])
                     if ((state.length === 0 && i > 0) || animID !== id) return state;
                     return timeline[i]
                 });
@@ -302,7 +303,6 @@ const Canvas = () => {
 
     const getEulerPath = () => {
         const path = applyEulerPath(nodes, directed, false);
-
         if (path.length <= 0) { dispatch(showMessage('No Eulerian path found.')); return; }
 
         for (let i = 0; i < path.length; i++) {
@@ -343,11 +343,32 @@ const Canvas = () => {
         return false;
     }
 
+    const getAlgoColor = () => {
+        switch (algorithm) {
+            case 'dijkstra':
+                return 'rgb(0, 183, 255)'
+            case 'prim':
+                return 'rgb(118,0,253)'
+            case 'kruskal':
+                return '#ff0063'
+            case 'eulerian_path':
+                return 'gold'
+            case 'eulerian_circuit':
+                return 'gold'
+            case 'bellman_ford':
+                return '#00ff96'
+            case 'longest_path':
+                return 'red'
+            default:
+                return 'lime'
+        }
+    }
+
     const Nodes: React.ReactNode =
         <>
             {
                 nodes.map(node => {
-                    let color = nodeOnPath(node) ? 'rgb(0, 255, 0)' : 'rgb(255, 255, 255)';
+                    let color = nodeOnPath(node) ? getAlgoColor() : 'rgb(255, 255, 255)';
                     if (connectedComps.length > 0) color = getNodeColor(node);
                     const state = animState.find((n => n.label === node.label))?.state;
                     return <Node key={node.label} node={node} color={color} selected={isSelected(node)} state={state} setSelectedNodes={setSelectedNodes} />
@@ -374,6 +395,7 @@ const Canvas = () => {
                                         connectedNodes={connectedNodes}
                                         key={connectedNodes}
                                         animState={animState}
+                                        path={path}
                                     />
                                 })
                             }

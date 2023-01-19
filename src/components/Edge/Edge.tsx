@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import './Edge.css';
-import { NodeType, removeEdge, selectAlgorithm, selectDirected, selectEdges, selectRemoving } from "../../features/graph/graphSlice";
+import { NodeType, removeEdge, selectAlgorithm, selectDirected, selectEdges, selectNodes, selectRemoving } from "../../features/graph/graphSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { focusEdge, selectWeighted } from "../../features/menu/menuSlice";
 import { BFS_Node } from "../../algorithms/BreadthFirstSearch";
@@ -11,15 +11,17 @@ type EdgePropsType = {
     to: NodeType,
     color?: string,
     connectedNodes: string,
-    animState: BFS_Node[]
+    animState: BFS_Node[],
+    path: string[]
 }
 
-const Edge = ({ from, to, color, connectedNodes, animState }: EdgePropsType) => {
+const Edge = ({ from, to, color, connectedNodes, animState, path }: EdgePropsType) => {
     const edges = useAppSelector(selectEdges);
     const weighted = useAppSelector(selectWeighted);
     const directed = useAppSelector(selectDirected);
     const removing = useAppSelector(selectRemoving);
     const algorithm = useAppSelector(selectAlgorithm);
+    const nodes = useAppSelector(selectNodes);
     const dispatch = useAppDispatch();
 
     const [stateColor, setStateColor] = useState('');
@@ -45,8 +47,6 @@ const Edge = ({ from, to, color, connectedNodes, animState }: EdgePropsType) => 
     const deltaY = from.y! - to.y!;
     const m = deltaY / deltaX;
     let angle = Math.atan(m);
-
-    // if (angle < 0) angle = Math - angle;
 
     const shadowColor = `rgba(${color!.substring(4, color!.length - 1)}, 0.2)`;
 
@@ -110,22 +110,56 @@ const Edge = ({ from, to, color, connectedNodes, animState }: EdgePropsType) => 
         if (!(edge?.from && edge?.to && edge)) return false;
         if (!(edge?.from.x && edge?.to.x)) return false;
 
-        if (edge.from.x > edge.to.x) return false;
-        return true;
+        const fromX = nodes.find(node => node.label === edge.from?.label)!.x!;
+        const toX = nodes.find(node => node.label === edge.to?.label)!.x!;
+
+        if (fromX < toX) return true;
+        return false;
+    }
+
+    const getAlgoColor = () => {
+        switch (algorithm) {
+            case 'dijkstra':
+                return 'rgb(0, 183, 255)'
+            case 'prim':
+                return 'rgb(118,0,253)'
+            case 'kruskal':
+                return '#ff0063'
+            case 'eulerian_path':
+                return 'gold'
+            case 'eulerian_circuit':
+                return 'gold'
+            case 'bellman_ford':
+                return '#00ff96'
+            case 'longest_path':
+                return 'red'
+            default:
+                return 'lime'
+        }
+    }
+
+    const swipeStyles: React.CSSProperties = {
+        backgroundColor: getAlgoColor(),
+        boxShadow: `inset 0 0 0.5em ${getAlgoColor()}, 0 0 0.5em ${getAlgoColor()}`,
     }
 
     return (
         <>
             {!isLoop &&
                 <div className={`edge ${highlighted ? 'highlighted' : ''}`} style={styles} onClick={handleClick}>
-                    {(directed && !getDirection()) && <div style={{ borderRight: `20px solid ${getColor()}` }} className="arrowhead start"></div>}
+                    {highlighted && <div className="swipe"
+                        style={swipeStyles}
+                    >
+                    </div>}
+
+                    {(directed && !getDirection()) && <div style={{ borderRight: `20px solid ${'white'}` }} className="arrowhead start"></div>}
                     {(directed && getDirection()) && <div></div>}
                     {!directed && <div></div>}
 
                     {weighted && <p style={{ backgroundColor: 'rgb(80, 80, 100)', fontWeight: 'bold' }}>{getWeight()}</p>}
                     {!weighted && <div></div>}
 
-                    {(directed && getDirection()) && <div style={{ borderLeft: `20px solid ${getColor()}` }} className="arrowhead end"></div>}
+                    {(directed && getDirection()) && <div style={{ borderLeft: `20px solid ${'white'}` }} className="arrowhead end"></div>}
                     {(directed && !getDirection()) && <div></div>}
                     {!directed && <div></div>}
                 </div>

@@ -25,8 +25,8 @@ const DFS = (node: NodeType, nodes: NodeType[]) => {
     let index = nodes.findIndex(n => n.label === node.label);
 
     while (outArray[index] > 0) {
-        let connectedNodes = [node.label, node.neighbours[outArray[index] - 1]].sort().join('');
-        if (!dir && visitedEdges.includes(connectedNodes)) { --outArray[index]; continue }
+        let connectedNodes = [node.label, node.neighbours[outArray[index] - 1].label].sort().join('');
+        if (!dir && visitedEdges.includes(connectedNodes)) { outArray[index] -= 1; continue }
         else {
             visitedEdges.push(connectedNodes)
             DFS(getNeighbour(node.neighbours[--outArray[index]], nodes)!, nodes);

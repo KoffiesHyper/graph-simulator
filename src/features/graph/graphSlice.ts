@@ -76,9 +76,6 @@ export const nodesSlice = createSlice({
         },
         toggleDirected: (state) => {
             state.directed = !state.directed;
-            state.edges = [];
-            state.nodes = [];
-            state.nextNodeLabel = 'A'
         },
         createConnection: (state, action: PayloadAction<{ firstNode: NodeType, secondNode: NodeType }>) => {
             const { firstNode, secondNode } = action.payload;
@@ -191,6 +188,11 @@ export const nodesSlice = createSlice({
                 movingNode.x = action.payload[0];
                 movingNode.y = action.payload[1];
             }
+        },
+        clearCanvas: (state) => {
+            state.edges = [];
+            state.nodes = [];
+            state.nextNodeLabel = 'A'
         }
     },
 });
@@ -211,8 +213,8 @@ export const {
     flipEdge,
     toggleMoving,
     changeMovingNode,
-    updateNodePosition
-
+    updateNodePosition,
+    clearCanvas
 } = nodesSlice.actions;
 
 export const selectNodes = (state: RootState) => state.graph.nodes;

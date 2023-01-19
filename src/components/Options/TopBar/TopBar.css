@@ -42,7 +42,7 @@
     height: auto;
     top: 40px;
     left: 0px;
-    background-color: rgb(255, 255, 255);
+    background-color: rgb(60, 60, 75);
     border-radius: 5px;
 }
 
@@ -56,13 +56,13 @@
 }
 
 .topbar button .action:hover{
-    background-color: rgb(220, 220, 230);
+    background-color: rgb(102, 102, 118);
 }
 
 .topbar button .action p{
     margin: 0px;
     font-weight: bold;
-    color: rgb(75, 75, 75);
+    color: white;
 }
 
 .topbar .first-btn{

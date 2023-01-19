@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import './TopBar.css';
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { changeAlgorithm, selectConnecting, selectRemoving, selectAlgorithm, toggleConnecting, toggleRemoving, selectAddingNode, toggleAddNode, resetEdgeWeights, inverseGraph, toggleDirected, selectDirected, AlgorithmType, toggleMoving, changeMovingNode, selectMoving, selectNodes } from "../../../features/graph/graphSlice";
+import { changeAlgorithm, selectConnecting, selectRemoving, selectAlgorithm, toggleConnecting, toggleRemoving, selectAddingNode, toggleAddNode, resetEdgeWeights, inverseGraph, toggleDirected, selectDirected, AlgorithmType, toggleMoving, changeMovingNode, selectMoving, selectNodes, clearCanvas } from "../../../features/graph/graphSlice";
 import { selectDegrees, selectWeighted, showMessage, toggleDegrees, toggleWeighted } from "../../../features/menu/menuSlice";
 import { IoMdAddCircleOutline, IoMdSettings } from 'react-icons/io'
 import { SlGraph } from 'react-icons/sl'
@@ -78,7 +78,7 @@ const TopBar = () => {
             return;
         }
 
-        if ((algorithm === 'longest_path') && !directed) {
+        if ((algorithm === 'longest_path' || algorithm === 'bellman_ford') && !directed) {
             dispatch(showMessage(`The ${formalize(algorithm)} algorithm only works on directed graphs.`))
             return;
         }
@@ -124,10 +124,11 @@ const TopBar = () => {
 
     const otherActions: ActionsType = {
         [weightActionTitle]: () => { dispatch(toggleWeighted(!weighted)); dispatch(resetEdgeWeights()) },
-        [directedActionTitle]: () => { dispatch(toggleDirected()) },
+        [directedActionTitle]: () => { dispatch(toggleDirected()); dispatch(clearCanvas()) },
         [degreesTitle]: () => dispatch(toggleDegrees()),
         [invertTitle]: () => dispatch(inverseGraph()),
-        [isomorphismTitle]: () => handleIsomorphism()
+        [isomorphismTitle]: () => handleIsomorphism(),
+        reset: () => dispatch(clearCanvas())
     }
 
     const formalize = (text: string) => {

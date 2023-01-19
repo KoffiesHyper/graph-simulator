@@ -77,6 +77,7 @@ const changeState = (node: BFS_Node, state: NodeState, save: boolean) => {
     let index = graph.findIndex(n => n.label === node.label);
     if (index !== -1) {
         if(graph[index].state === 'visited') return;
+        if(state === 'searched' && !graph.find(n => n.state === 'current')) return
         graph[index] = { ...graph[index], state };
         if (save) timeline.push([...graph]);
     }

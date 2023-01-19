@@ -97,7 +97,7 @@ const Node = ({ node, color, selected, state, setSelectedNodes }: NodePropsType)
         zIndex: 10,
         border: selected ? "3px solid white" : `3px solid ${(stateColor.length > 0) ? stateColor : color}`,
         boxShadow: `0 4px 8px 0 ${shadowColor}, 0 6px 20px 0 ${shadowColor}`,
-        cursor: (movingNode === node.label && moving) ? 'grabbing' : ((moving) ? 'grab' : 'cursor')
+        cursor: (moving && movingNode === node.label ) ? 'grabbing' : ((moving) ? 'grab' : 'cursor')
     };
 
     return (
