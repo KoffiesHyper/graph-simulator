@@ -17,9 +17,9 @@ const PopUp = () => {
 
     if (message?.includes('info-')) {
         message = message.substring(5);
-        styles.backgroundColor = 'rgb(0, 0, 90)'
-        styles.border = '1px solid rgb(0, 0, 90)'
-        styles.boxShadow = 'inset 0 0 0.25em rgba(0, 0, 90, 0.75), 0 0 0.25em rgba(0, 0, 90, 0.75)'
+        styles.backgroundColor = 'rgb(60, 60, 75)'
+        styles.border = '2px solid white'
+        styles.boxShadow = 'none'
         styles.color = 'white'
     }
 

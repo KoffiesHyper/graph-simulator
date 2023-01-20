@@ -1,11 +1,9 @@
 .edge {
     background-color: white;
     cursor: pointer;
-    display: grid;
-    justify-items: center;
-    align-content: center;
-    grid-template-columns: 1fr 3fr 1fr;
-    grid-template-rows: 1fr;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     /* transition-duration: .15s; */
 }
 

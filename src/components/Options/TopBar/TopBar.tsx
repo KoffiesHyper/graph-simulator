@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import './TopBar.css';
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { changeAlgorithm, selectConnecting, selectRemoving, selectAlgorithm, toggleConnecting, toggleRemoving, selectAddingNode, toggleAddNode, resetEdgeWeights, inverseGraph, toggleDirected, selectDirected, AlgorithmType, toggleMoving, changeMovingNode, selectMoving, selectNodes, clearCanvas } from "../../../features/graph/graphSlice";
-import { selectDegrees, selectWeighted, showMessage, toggleDegrees, toggleWeighted } from "../../../features/menu/menuSlice";
+import { disableEdgeMenu, focusEdge, selectDegrees, selectWeighted, showMessage, toggleDegrees, toggleWeighted } from "../../../features/menu/menuSlice";
 import { IoMdAddCircleOutline, IoMdSettings } from 'react-icons/io'
 import { SlGraph } from 'react-icons/sl'
 import { RiDeleteBin5Line } from 'react-icons/ri'
@@ -83,6 +83,14 @@ const TopBar = () => {
             return;
         }
 
+        if(algorithm === 'dijkstra' || algorithm === 'longest_path' || algorithm === 'bfs' || algorithm === 'bellman_ford'){
+            dispatch(showMessage(`info-Choose a start and finish node.`))
+        }
+
+        if(algorithm === 'dfs'){
+            dispatch(showMessage(`info-Choose a start node.`))
+        }
+
         disableAllActions();
         dispatch(changeAlgorithm(algorithm));
     }
@@ -124,11 +132,11 @@ const TopBar = () => {
 
     const otherActions: ActionsType = {
         [weightActionTitle]: () => { dispatch(toggleWeighted(!weighted)); dispatch(resetEdgeWeights()) },
-        [directedActionTitle]: () => { dispatch(toggleDirected()); dispatch(clearCanvas()) },
+        [directedActionTitle]: () => { dispatch(toggleDirected()); dispatch(clearCanvas()); dispatch(disableEdgeMenu()) },
         [degreesTitle]: () => dispatch(toggleDegrees()),
         [invertTitle]: () => dispatch(inverseGraph()),
         [isomorphismTitle]: () => handleIsomorphism(),
-        reset: () => dispatch(clearCanvas())
+        reset: () => {dispatch(clearCanvas()); dispatch(disableEdgeMenu());}
     }
 
     const formalize = (text: string) => {

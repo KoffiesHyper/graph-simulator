@@ -25,6 +25,7 @@ export const menuSlice = createSlice({
     reducers: {
         focusEdge: (state, action: PayloadAction<EdgeType>) => {
             state.focusedEdge = action.payload;
+            console.log(action.payload)
             state.showEdgeMenu = true;
         },
         disableEdgeMenu: (state) => {

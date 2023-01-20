@@ -15,6 +15,11 @@ import applyBellmanFord from '../../algorithms/BellmanFord';
 import applyDPS from '../../algorithms/DepthFirstSearch';
 import applyEulerPath from '../../algorithms/Euler';
 
+type AnimStateType = {
+    state: BFS_Node[],
+    id: number
+}
+
 const VIBRANT_COLORS = [
     "rgb(255, 0, 0)", "rgb(255, 153, 51)", "rgb(255, 255, 0)",
     "rgb(0, 255, 0)", "rgb(0, 255, 255)", "rgb(0, 0, 255)",
@@ -42,20 +47,20 @@ const Canvas = () => {
     const [path, setPath] = useState<any[]>([]);
     const [MST, setMST] = useState<EdgeType[]>([]);
     const [connectedComps, setConnectedComps] = useState<CCNode[]>([]);
-    const [animState, setAnimState] = useState<BFS_Node[]>([]);
-    const [animID, setAnimID] = useState<number>(0);
+    const [animState, setAnimState] = useState<AnimStateType>({ state: [], id: 0 });
 
     useEffect(() => {
         window.addEventListener('mouseclick', handleClick);
         window.addEventListener('mousemove', handleMove);
     }, []);
 
+
     useEffect(() => {
         if (selectedNodes.length == 1 && algorithm === 'dfs') {
             setTimeout(() => {
                 const timeline = applyDPS(selectedNodes[0], nodes)!;
                 setNewAnimID();
-                playTimeline(timeline, animID)
+                playTimeline(timeline, setNewAnimID())
                 setSelectedNodes([]);
             }, 500)
         }
@@ -76,8 +81,8 @@ const Canvas = () => {
             setTimeout(() => {
                 setPath([]);
                 const timeline = applyBreadthFirstSearch(nodes, selectedNodes[0], selectedNodes[1]);
-                setNewAnimID();
-                playTimeline(timeline, animID)
+
+                playTimeline(timeline, setNewAnimID())
                 setSelectedNodes([]);
             }, 500)
         }
@@ -99,7 +104,8 @@ const Canvas = () => {
         setPath([]);
         setMST([]);
         setConnectedComps([]);
-        setAnimState([]);
+        setAnimState({ state: [], id: 0 });
+        setSelectedNodes([])
 
         if (algorithm === 'kruskal') getKruskal();
         if (algorithm === 'prim') getPrim();
@@ -130,7 +136,9 @@ const Canvas = () => {
             const connectedNodes = [selectedNodes[0].label, selectedNodes[1].label].sort().join("");
             const newEdge: EdgeType = {
                 connectedNodes: connectedNodes,
-                weight: 1
+                weight: 1,
+                from: connection.firstNode,
+                to: connection.secondNode
             }
 
             dispatch(createConnection(connection));
@@ -170,24 +178,23 @@ const Canvas = () => {
     const playTimeline = (timeline: BFS_Node[][], id: number) => {
         for (let i = 0; i < timeline.length; i++) {
             setTimeout(() => {
-                setAnimState(state => {
-                    // console.log(timeline[i])
-                    if ((state.length === 0 && i > 0) || animID !== id) return state;
-                    return timeline[i]
+                setAnimState(anim => {
+                    if ((anim.state.length === 0 && i > 0) || anim.id !== id) return anim;
+                    if (i === timeline.length - 1 && anim.id === id) setTimeout(() => { extractPath(timeline.pop(), selectedNodes[1]) }, 1000);
+                    return { state: timeline[i], id: id }
                 });
 
-                if (i === timeline.length - 1) setTimeout(() => { extractPath(timeline.pop(), selectedNodes[1]) }, 1000);
 
             }, 500 * i)
         }
     }
 
     const extractPath = (graph: any, finish: any) => {
-        setAnimState([]);
+        setAnimState({ state: [], id: 0 });
         if (graph.length === 0) return;
 
         let currentLabel = finish.label;
-        let path: string[] = [];
+        let newPath: string[] = [];
         let x = 0;
         let len = 0;
 
@@ -195,13 +202,13 @@ const Canvas = () => {
             for (let i = 0; i < graph.length; i++) {
                 if (graph[i].label === currentLabel) {
                     len++;
-                    path = [currentLabel, ...path];
+                    newPath = [currentLabel, ...newPath];
                     x = i;
                     break;
                 }
             }
 
-            if (len > 100) return path;
+            if (len > 100) return newPath;
 
             if (graph[x].previous)
                 currentLabel = graph[x].previous.label;
@@ -212,12 +219,11 @@ const Canvas = () => {
 
         // path.reverse();
 
-        for (let i = 0; i < path.length; i++) {
+        for (let i = 0; i < newPath.length; i++) {
             setTimeout(() => {
                 setPath(p => {
-                    if (p.length === 0 && i > 0) return [];
-                    if (i === 0) return [path[i]]
-                    return [...p, path[i]];
+                    if (p.length < i) return p;
+                    return [...p, newPath[i]];
                 })
             }, 500 * i)
         }
@@ -225,9 +231,10 @@ const Canvas = () => {
 
     const setNewAnimID = () => {
         let newID = Math.random() * 100;
-        while (newID === animID) newID = Math.random() * 100;
+        while (newID === animState.id) newID = Math.random() * 100;
 
-        setAnimID(newID);
+        setAnimState(anim => { return { state: anim.state, id: newID } });
+        return newID;
     }
 
     const isOnOtherNode = (pos: PositionType) => {
@@ -370,7 +377,7 @@ const Canvas = () => {
                 nodes.map(node => {
                     let color = nodeOnPath(node) ? getAlgoColor() : 'rgb(255, 255, 255)';
                     if (connectedComps.length > 0) color = getNodeColor(node);
-                    const state = animState.find((n => n.label === node.label))?.state;
+                    const state = animState.state.find((n => n.label === node.label))?.state;
                     return <Node key={node.label} node={node} color={color} selected={isSelected(node)} state={state} setSelectedNodes={setSelectedNodes} />
                 })
             }
@@ -394,7 +401,7 @@ const Canvas = () => {
                                         color={edgeOnPath(node, neighbour) || edgeOnKruskal(connectedNodes) ? 'rgb(0, 255, 0)' : 'rgb(255, 255, 255)'}
                                         connectedNodes={connectedNodes}
                                         key={connectedNodes}
-                                        animState={animState}
+                                        animState={animState.state}
                                         path={path}
                                     />
                                 })

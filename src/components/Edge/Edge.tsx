@@ -54,6 +54,19 @@ const Edge = ({ from, to, color, connectedNodes, animState, path }: EdgePropsTyp
 
     const isLoop = from.label === to.label;
 
+    const getOffset = (dir: string) => {
+        const parralelEdges = edges.filter(e => e.connectedNodes === connectedNodes);
+        if (parralelEdges.length <= 1) return 0;
+
+        let dist = 15;
+
+        const parralelEdge = edges.find(e => e.connectedNodes === connectedNodes && from.label === e.from?.label);
+        if (parralelEdge?.from?.label! < parralelEdge?.to?.label!) return (dir === 'vert') ? dist * Math.cos(angle) : dist * Math.cos(Math.PI / 2 - angle)
+        else if (parralelEdge?.from?.label! > parralelEdge?.to?.label!) return (dir === 'vert') ? -dist * Math.cos(angle) : -dist * Math.cos(Math.PI / 2 - angle)
+
+        return 0;
+    }
+
     if (isLoop) {
         styles = {
             width: '40px',
@@ -71,8 +84,8 @@ const Edge = ({ from, to, color, connectedNodes, animState, path }: EdgePropsTyp
             width: width,
             height: height,
             position: 'absolute',
-            left: ((from.x! + to.x!) / 2) - width / 2 + 25,
-            top: ((from.y! + to.y!)) / 2 - height / 2 + 25,
+            left: ((from.x! + to.x!) / 2) - width / 2 + 25 + getOffset('hori'),
+            top: ((from.y! + to.y!)) / 2 - height / 2 + 25 + getOffset('vert'),
             transform: `rotate(${angle}rad)`
         }
     }
@@ -94,18 +107,19 @@ const Edge = ({ from, to, color, connectedNodes, animState, path }: EdgePropsTyp
     }
 
     const handleClick = (ev: any) => {
-        const edge = edges.find((e) => e.connectedNodes === connectedNodes)!;
+        const edge = edges.find((e) => e.connectedNodes === connectedNodes && e.from?.label === from.label)!;
 
         if (removing) dispatch(removeEdge(edge));
         else if (edge) dispatch(focusEdge(edge));
     }
 
     const getWeight = () => {
-        return edges.find(e => e.connectedNodes === connectedNodes)?.weight;
+        console.log()
+        return edges.find(e => e.connectedNodes === connectedNodes && (!directed || (directed && from.label === e.from?.label)))?.weight;
     }
 
     const getDirection = () => {
-        const edge = edges.find(e => e.connectedNodes === connectedNodes);
+        const edge = edges.find(e => e.connectedNodes === connectedNodes && e.from?.label === from.label);
 
         if (!(edge?.from && edge?.to && edge)) return false;
         if (!(edge?.from.x && edge?.to.x)) return false;
@@ -157,7 +171,6 @@ const Edge = ({ from, to, color, connectedNodes, animState, path }: EdgePropsTyp
                     {!directed && <div></div>}
 
                     {weighted && <p style={{ backgroundColor: 'rgb(80, 80, 100)', fontWeight: 'bold' }}>{getWeight()}</p>}
-                    {!weighted && <div></div>}
 
                     {(directed && getDirection()) && <div style={{ borderLeft: `20px solid ${'white'}` }} className="arrowhead end"></div>}
                     {(directed && !getDirection()) && <div></div>}

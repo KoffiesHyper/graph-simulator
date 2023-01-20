@@ -26,7 +26,7 @@ export type AlgorithmType =
     'connected_components' |
     'bellman_ford' |
     'eulerian_path' |
-    'eulerian_circuit' 
+    'eulerian_circuit'
 
 export type GraphStateType = {
     nodes: NodeType[],
@@ -121,12 +121,16 @@ export const nodesSlice = createSlice({
             })
 
             state.edges = state.edges.filter(edge => edge.connectedNodes !== "deleted")
+
+            for (let i = 0; i < 26; i++) {
+                if(String.fromCharCode(65 + i) !== state.nodes[0].label) {state.nextNodeLabel = String.fromCharCode(65 + i); break; }
+            }
         },
         changeAlgorithm: (state, action: PayloadAction<AlgorithmType>) => {
             state.algorithm = action.payload;
         },
         updateEdgeWeight: (state, action: PayloadAction<EdgeType>) => {
-            const index = state.edges.findIndex(e => e.connectedNodes === action.payload.connectedNodes);
+            const index = state.edges.findIndex(e => e.connectedNodes === action.payload.connectedNodes && e.from?.label === action.payload.from?.label);
             state.edges[index] = action.payload;
         },
         removeEdge: (state, action: PayloadAction<EdgeType>) => {
@@ -159,8 +163,12 @@ export const nodesSlice = createSlice({
         resetEdgeWeights: (state) => {
             state.edges = state.edges.map(e => { return { ...e, weight: 1 } });
         },
-        flipEdge: (state, action: PayloadAction<string>) => {
-            const edge = state.edges.find(edge => edge.connectedNodes === action.payload);
+        flipEdge: (state, action: PayloadAction<EdgeType>) => {
+            const edges = state.edges.filter(edge => edge.connectedNodes === action.payload.connectedNodes && edge.from?.label === action.payload.to?.label);
+            if(edges.length > 0) return;
+
+            const edge = state.edges.find(edge => edge.connectedNodes === action.payload.connectedNodes && edge.from?.label === action.payload.from?.label);
+
             if (!edge) return;
 
             const fromNode = { ...edge.from } as NodeType;
