@@ -32,11 +32,11 @@ const Edge = ({ from, to, color, connectedNodes, animState, path }: EdgePropsTyp
         const fromState = animState.find(node => node.label === from.label)!;
         const toState = animState.find(node => node.label === to.label)!;
 
-        if ((fromState.state === 'searched' && toState.state === 'current') ||
+        if ((fromState.state === 'searched' && toState.state === 'current' && !directed) ||
             (toState.state === 'searched' && fromState.state === 'current')) setStateColor('rgb(255, 255, 0)')
-        else if ((fromState.state === 'target' && toState.state === 'current') ||
+        else if ((fromState.state === 'target' && toState.state === 'current' && !directed) ||
             (toState.state === 'target' && fromState.state === 'current')) setStateColor('rgb(0, 255, 0)')
-        else if (fromState.state === 'visited' || toState.state === 'visited') setStateColor('grey')
+        else if (fromState.state === 'visited' || (toState.state === 'visited' && !directed)) setStateColor('grey')
         else setStateColor('');
     }, [animState])
 
@@ -180,13 +180,13 @@ const Edge = ({ from, to, color, connectedNodes, animState, path }: EdgePropsTyp
                 <div className={`edge ${highlighted ? 'highlighted' : ''}`} style={styles} onClick={handleClick}>
                     {highlighted && <div className="swipe" style={swipeStyles}></div>}
 
-                    {(directed && !getDirection()) && <div style={{ borderRight: `20px solid ${color}` }} className="arrowhead start"></div>}
+                    {(directed && !getDirection()) && <div style={{ borderRight: `20px solid ${getColor()}` }} className="arrowhead start"></div>}
                     {(directed && getDirection()) && <div></div>}
                     {!directed && <div></div>}
 
                     {weighted && <p style={{ backgroundColor: 'rgb(80, 80, 100)', fontWeight: 'bold' }}>{getWeight()}</p>}
 
-                    {(directed && getDirection()) && <div style={{ borderLeft: `20px solid ${color}` }} className="arrowhead end"></div>}
+                    {(directed && getDirection()) && <div style={{ borderLeft: `20px solid ${getColor()}` }} className="arrowhead end"></div>}
                     {(directed && !getDirection()) && <div></div>}
                     {!directed && <div></div>}
                 </div>

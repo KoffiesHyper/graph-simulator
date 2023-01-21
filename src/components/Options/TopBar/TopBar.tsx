@@ -178,7 +178,7 @@ const TopBar = () => {
                         {
                             Object.entries(algoActions).map(entry => {
                                 return (
-                                    <div className="action" onClick={entry[1]}>
+                                    <div className="action" onClick={() => {entry[1](); setAlgoExpanded(exp => !exp)}}>
                                         <p>{formalize(entry[0])}</p>
                                     </div>
                                 )
@@ -196,7 +196,7 @@ const TopBar = () => {
                         {
                             Object.entries(otherActions).map(entry => {
                                 return (
-                                    <div className="action" onClick={entry[1]}>
+                                    <div className="action" onClick={() => {entry[1](); setActionExpanded(exp => !exp)}}>
                                         <p>{formalize(entry[0])}</p>
                                     </div>
                                 )
