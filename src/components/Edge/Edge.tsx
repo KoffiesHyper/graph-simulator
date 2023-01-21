@@ -107,25 +107,40 @@ const Edge = ({ from, to, color, connectedNodes, animState, path }: EdgePropsTyp
     }
 
     const handleClick = (ev: any) => {
-        const edge = edges.find((e) => e.connectedNodes === connectedNodes && e.from?.label === from.label)!;
+        const edge = edges.find((e) => e.connectedNodes === connectedNodes && (!directed || e.from?.label === from.label))!;
 
         if (removing) dispatch(removeEdge(edge));
         else if (edge) dispatch(focusEdge(edge));
     }
 
     const getWeight = () => {
-        console.log()
         return edges.find(e => e.connectedNodes === connectedNodes && (!directed || (directed && from.label === e.from?.label)))?.weight;
     }
 
     const getDirection = () => {
-        const edge = edges.find(e => e.connectedNodes === connectedNodes && e.from?.label === from.label);
+        let fromX = 0, toX = 0;
 
-        if (!(edge?.from && edge?.to && edge)) return false;
-        if (!(edge?.from.x && edge?.to.x)) return false;
+        if (!directed && path.includes(from.label) && path.includes(to.label)) {
+            const fromIndex = path.findIndex((node, i) => node === from.label && ((to.label === path[i + 1]) || (to.label === path[i - 1])));
+            if(fromIndex === -1) return;
+            if (fromIndex < path.length - 1 && path[fromIndex + 1] === to.label) {
+                fromX = nodes.find(node => node.label === path[fromIndex])!.x!;
+                toX = nodes.find(node => node.label === path[fromIndex + 1])!.x!;
+            } else {
+                toX = nodes.find(node => node.label === path[fromIndex])!.x!;
+                fromX = nodes.find(node => node.label === path[fromIndex - 1])!.x!;
+            }
+        } else {
+            const edge = edges.find(e => e.connectedNodes === connectedNodes && e.from?.label === from.label);
 
-        const fromX = nodes.find(node => node.label === edge.from?.label)!.x!;
-        const toX = nodes.find(node => node.label === edge.to?.label)!.x!;
+            if (!(edge?.from && edge?.to && edge)) return false;
+            if (!(edge?.from.x && edge?.to.x)) return false;
+
+            fromX = nodes.find(node => node.label === edge.from?.label)!.x!;
+            toX = nodes.find(node => node.label === edge.to?.label)!.x!;
+        }
+
+
 
         if (fromX < toX) return true;
         return false;
@@ -155,24 +170,23 @@ const Edge = ({ from, to, color, connectedNodes, animState, path }: EdgePropsTyp
     const swipeStyles: React.CSSProperties = {
         backgroundColor: getAlgoColor(),
         boxShadow: `inset 0 0 0.5em ${getAlgoColor()}, 0 0 0.5em ${getAlgoColor()}`,
+        left: getDirection() ? '0' : 'unset',
+        right: !getDirection() ? '0' : 'unset'
     }
 
     return (
         <>
             {!isLoop &&
                 <div className={`edge ${highlighted ? 'highlighted' : ''}`} style={styles} onClick={handleClick}>
-                    {highlighted && <div className="swipe"
-                        style={swipeStyles}
-                    >
-                    </div>}
+                    {highlighted && <div className="swipe" style={swipeStyles}></div>}
 
-                    {(directed && !getDirection()) && <div style={{ borderRight: `20px solid ${'white'}` }} className="arrowhead start"></div>}
+                    {(directed && !getDirection()) && <div style={{ borderRight: `20px solid ${color}` }} className="arrowhead start"></div>}
                     {(directed && getDirection()) && <div></div>}
                     {!directed && <div></div>}
 
                     {weighted && <p style={{ backgroundColor: 'rgb(80, 80, 100)', fontWeight: 'bold' }}>{getWeight()}</p>}
 
-                    {(directed && getDirection()) && <div style={{ borderLeft: `20px solid ${'white'}` }} className="arrowhead end"></div>}
+                    {(directed && getDirection()) && <div style={{ borderLeft: `20px solid ${color}` }} className="arrowhead end"></div>}
                     {(directed && !getDirection()) && <div></div>}
                     {!directed && <div></div>}
                 </div>

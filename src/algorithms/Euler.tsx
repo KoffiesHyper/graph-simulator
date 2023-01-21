@@ -1,4 +1,4 @@
-import { NodeType } from "../features/graph/graphSlice";
+import { NodeType } from "../features/graph/graphSlice"; 
 
 let outArray: number[] = [];
 let path: string[] = [];

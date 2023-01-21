@@ -4,6 +4,7 @@ import { selectConnecting, selectRemoving, removeNode, selectAlgorithm, selectEd
 import type { NodeType } from "../../features/graph/graphSlice";
 import './Node.css';
 import { selectDegrees } from "../../features/menu/menuSlice";
+import { hasCycle } from "../../algorithms/DepthFirstSearch";
 
 type NodePropsType = {
     node: NodeType,
@@ -54,7 +55,6 @@ const Node = ({ node, color, selected, state, setSelectedNodes }: NodePropsType)
     }, [state])
 
     const handleClick = (ev: any) => {
-        console.log(edges)
         if (connecting) {
             setSelectedNodes(nodes => [...nodes, node]);
         }

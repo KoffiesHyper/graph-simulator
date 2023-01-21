@@ -61,9 +61,17 @@ export const nodesSlice = createSlice({
     reducers: {
         addNode: (state, action: PayloadAction<NodeType>) => {
             const newNode = action.payload;
-            newNode.label = state.nextNodeLabel;
+
+            const sortedNodes = state.nodes.sort((a, b) => a.label.charCodeAt(0) - b.label.charCodeAt(0));
+
+            for (let i = 0; i < state.nodes.length; i++) {
+                if (String.fromCharCode(65 + i) !== sortedNodes[i].label) { state.nextNodeLabel = String.fromCharCode(65 + i); break; }
+                else if (i === state.nodes.length - 1) state.nextNodeLabel = String.fromCharCode(sortedNodes[state.nodes.length - 1].label.charCodeAt(0) + 1)
+            }
+
+
+            state.nodes.push({ ...newNode, label: state.nextNodeLabel });
             state.nextNodeLabel = String.fromCharCode(state.nextNodeLabel.charCodeAt(0) + 1);
-            state.nodes.push(newNode);
         },
         toggleAddNode: (state, action: PayloadAction<boolean>) => {
             state.addingNode = action.payload;
@@ -123,7 +131,7 @@ export const nodesSlice = createSlice({
             state.edges = state.edges.filter(edge => edge.connectedNodes !== "deleted")
 
             for (let i = 0; i < 26; i++) {
-                if(String.fromCharCode(65 + i) !== state.nodes[0].label) {state.nextNodeLabel = String.fromCharCode(65 + i); break; }
+                if (String.fromCharCode(65 + i) !== state.nodes.sort((a, b) => a.label.charCodeAt(0) - b.label.charCodeAt(0))[0].label) { state.nextNodeLabel = String.fromCharCode(65 + i); break; }
             }
         },
         changeAlgorithm: (state, action: PayloadAction<AlgorithmType>) => {
@@ -143,6 +151,8 @@ export const nodesSlice = createSlice({
             });
         },
         inverseGraph: (state) => {
+            if (state.directed) return;
+            
             const originalEdges = [...state.edges];
             state.edges = [];
 
@@ -165,7 +175,7 @@ export const nodesSlice = createSlice({
         },
         flipEdge: (state, action: PayloadAction<EdgeType>) => {
             const edges = state.edges.filter(edge => edge.connectedNodes === action.payload.connectedNodes && edge.from?.label === action.payload.to?.label);
-            if(edges.length > 0) return;
+            if (edges.length > 0) return;
 
             const edge = state.edges.find(edge => edge.connectedNodes === action.payload.connectedNodes && edge.from?.label === action.payload.from?.label);
 

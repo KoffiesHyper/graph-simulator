@@ -1,5 +1,6 @@
 .pop-up{
-    width: 500px;
+    width: auto;
+    min-width: 500px;
     position: fixed;
     left: calc(50vw - 270px);
     background-color: red;

@@ -1,4 +1,4 @@
-import { NodeType } from "../features/graph/graphSlice";
+import { NodeType } from "../features/graph/graphSlice"; 
 
 type NodeState = string;
 
@@ -17,7 +17,7 @@ const applyDPS = (startNode: NodeType, graph: NodeType[]) => {
     if (graph.length === 0) return undefined;
 
     DPSGraph = graph.map((e) => { return { ...e, visited: false, state: '', previous: null } as DPS_Node });
-    DPS(DPSGraph.find(node => node.label === startNode.label)!);
+    DFS(DPSGraph.find(node => node.label === startNode.label)!);
 
     return timeline
 }
@@ -33,13 +33,13 @@ export const isConnected = (graph: NodeType[]) => {
     if (graph.length === 0) return false;
 
     DPSGraph = graph.map((e) => { return { ...e, visited: false } as DPS_Node });
-    DPS(DPSGraph[0]);
+    DFS(DPSGraph[0]);
 
     if (DPSGraph.find(e => !e.visited)) return false;
     return true;
 }
 
-const DPS = (node: DPS_Node) => {
+const DFS = (node: DPS_Node) => {
     if (node.visited) return;
 
     node.visited = true;
@@ -47,7 +47,7 @@ const DPS = (node: DPS_Node) => {
     changeState(node, 'visiting', true)
 
     for (let i = 0; i < node.neighbours.length; i++) {
-        DPS(DPSGraph.find(e => e.label === node.neighbours[i].label)!);
+        DFS(DPSGraph.find(e => e.label === node.neighbours[i].label)!);
     }
 
     changeState(node, 'visited', true)
@@ -73,6 +73,27 @@ export const hasPath = (graph: NodeType[], from: string, to: string) => {
                 return true;
             };
         }
+    }
+}
+
+let cycle = false;
+
+export const hasCycle = (graph: NodeType[]) => {
+    cycle = false;
+    DPSGraph = graph.map((e) => { return { ...e, visited: false } as DPS_Node });
+    
+    CycleSeekingDFS(DPSGraph[0], []);
+
+    return cycle;
+}
+
+const CycleSeekingDFS = (node: DPS_Node, ancestors: DPS_Node[]) => {
+    if(node.visited) return;
+    node.visited = true;
+
+    for (let i = 0; i < node.neighbours.length; i++) {
+        if(ancestors.find(ancest => ancest.label === node.neighbours[i].label)) {cycle = true; return}
+        CycleSeekingDFS(DPSGraph.find(e => e.label === node.neighbours[i].label)!, [...ancestors, node]);    
     }
 }
 

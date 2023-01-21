@@ -1,4 +1,4 @@
-import { NodeType } from "../features/graph/graphSlice";
+import { NodeType } from "../features/graph/graphSlice"; 
 
 export interface CCNode extends NodeType {
     group: number,
@@ -57,8 +57,6 @@ export const checkOrderIsomorphism = (graph: NodeType[]) => {
 
     let sameNumEdges = graph1NumEdges === graph2NumEdges;
     let sameNumLoops = graph1NumLoops === graph2NumLoops;
-
-    console.log(graph1.length, graph2.length, connectedComps.length)
 
     if(!sameNumNodes) return 'not_isomorphic';
 

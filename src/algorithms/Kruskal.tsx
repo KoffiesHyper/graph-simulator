@@ -1,7 +1,9 @@
-import { EdgeType, NodeType } from "../features/graph/graphSlice";
+import { EdgeType, NodeType } from "../features/graph/graphSlice"; 
 import { hasPath, isConnected } from "./DepthFirstSearch";
 
 const applyKruskal = (nodes: NodeType[], edges: EdgeType[]) => {
+    if(!isConnected(nodes)) return [];
+
     let tree: EdgeType[] = [];
     edges = [...edges];
 
@@ -13,8 +15,6 @@ const applyKruskal = (nodes: NodeType[], edges: EdgeType[]) => {
         addEdge(sortedEdges[i]);
         if (isConnected(graph)) return tree;
     }
-
-    return null;
 
     function addEdge(edge: EdgeType) {
         const labels = edge.connectedNodes.split("");

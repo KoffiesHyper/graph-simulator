@@ -1,4 +1,4 @@
-import { EdgeType, NodeType } from "../features/graph/graphSlice";
+import { EdgeType, NodeType } from "../features/graph/graphSlice"; 
 
 interface BF_Node extends NodeType {
     previous: NodeType | undefined,
@@ -6,25 +6,25 @@ interface BF_Node extends NodeType {
 }
 
 let graph: BF_Node[] = [];
-let sortedEdgeLabels: string[] = []
+let sortedEdges: EdgeType[] = []
 
 const applyBellmanFord = (startNode: NodeType, nodes: NodeType[], edges: EdgeType[], directed: boolean) => {
-    sortedEdgeLabels = [];
-    orderEdges(startNode, nodes);
+    sortedEdges = [];
+    orderEdges(startNode, nodes, edges);
 
     graph = nodes.map(node => { return { ...node, previous: undefined, dist: (node.label === startNode.label) ? 0 : Infinity } })
 
     for (let i = 0; i < nodes.length - 1; i++) {
-        for (let j = 0; j < sortedEdgeLabels.length; j++) {
-            relaxEdge(sortedEdgeLabels[j], nodes, edges, directed);
+        for (let j = 0; j < sortedEdges.length; j++) {
+            relaxEdge(sortedEdges[j], nodes, edges, directed);
         }
     }
 
     return graph
 }
 
-const relaxEdge = (connectedNodes: string, nodes: NodeType[], edges: EdgeType[], directed: boolean) => {
-    const edge = edges.find(e => e.connectedNodes === connectedNodes);
+const relaxEdge = (relaxedEdge: EdgeType, nodes: NodeType[], edges: EdgeType[], directed: boolean) => {
+    const edge = edges.find(e => e.connectedNodes === relaxedEdge.connectedNodes && e.from?.label === relaxedEdge.from?.label);
 
     if (!edge) return;
 
@@ -38,13 +38,12 @@ const relaxEdge = (connectedNodes: string, nodes: NodeType[], edges: EdgeType[],
     } 
 
     if(graph[fromIndex].dist + edge.weight < graph[toIndex].dist){
-        if(connectedNodes.includes('F')) console.log('nice')
         graph[toIndex].dist = graph[fromIndex].dist + edge.weight;
         graph[toIndex].previous = edge.from;
     }
 }
 
-const orderEdges = (startNode: NodeType, nodes: NodeType[]) => {
+const orderEdges = (startNode: NodeType, nodes: NodeType[], edges: EdgeType[]) => {
     let queue: NodeType[] = [];
     queue.push(startNode);
 
@@ -59,7 +58,7 @@ const orderEdges = (startNode: NodeType, nodes: NodeType[]) => {
                 if(visited.find(n => n.label === queue[i].neighbours[j].label)) continue;
 
                 const neighbour = queue[i].neighbours[j];
-                addEdge(queue[i].label, neighbour.label)
+                addEdge(queue[i].label, neighbour.label, edges)
                 queue.push(nodes.find(node => node.label === neighbour.label)!)
             }
         }
@@ -70,9 +69,8 @@ const orderEdges = (startNode: NodeType, nodes: NodeType[]) => {
     }
 }
 
-const addEdge = (from: string, to: string) => {
-    const connectedNodes = (from < to) ? from + to : to + from;
-    if (!sortedEdgeLabels.includes(connectedNodes)) sortedEdgeLabels.push(connectedNodes);
+const addEdge = (from: string, to: string, edges: EdgeType[]) => {
+    sortedEdges.push(edges.find(e => e.from?.label === from && e.to?.label === to)!);
 }
 
 export default applyBellmanFord;

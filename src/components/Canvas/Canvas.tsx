@@ -21,15 +21,16 @@ type AnimStateType = {
 }
 
 const VIBRANT_COLORS = [
-    "rgb(255, 0, 0)", "rgb(255, 153, 51)", "rgb(255, 255, 0)",
-    "rgb(0, 255, 0)", "rgb(0, 255, 255)", "rgb(0, 0, 255)",
-    "rgb(153, 51, 255)", "rgb(255, 0, 255)", "rgb(255, 102, 0)",
-    "rgb(255, 255, 153)", "rgb(51, 153, 255)", "rgb(255, 102, 178)",
-    "rgb(0, 153, 204)", "rgb(51, 153, 102)", "rgb(255, 0, 102)",
-    "rgb(178, 255, 102)", "rgb(102, 0, 255)", "rgb(102, 255, 204)",
-    "rgb(255, 204, 153)", "rgb(153, 255, 51)", "rgb(0, 102, 255)",
-    "rgb(153, 51, 0)", "rgb(255, 153, 153)", "rgb(51, 255, 153)",
-    "rgb(255, 51, 153)", "rgb(51, 153, 153)", "rgb(153, 153, 153)"
+    "rgb(255, 153, 51)", "rgb(255, 204, 51)", "rgb(51, 255, 153)",
+    "rgb(51, 255, 204)", "rgb(51, 204, 255)", "rgb(153, 51, 255)",
+    "rgb(204, 51, 255)", "rgb(255, 51, 153)", "rgb(255, 51, 204)",
+    "rgb(153, 255, 51)", "rgb(204, 255, 51)", "rgb(51, 153, 255)",
+    "rgb(51, 204, 255)", "rgb(255, 153, 153)", "rgb(255, 204, 204)",
+    "rgb(153, 153, 255)", "rgb(204, 204, 255)", "rgb(255, 153, 204)",
+    "rgb(255, 204, 153)", "rgb(153, 255, 204)", "rgb(204, 255, 153)",
+    "rgb(153, 204, 255)", "rgb(204, 153, 255)", "rgb(255, 153, 102)",
+    "rgb(255, 204, 102)", "rgb(102, 255, 153)", "rgb(102, 255, 204)",
+    "rgb(102, 204, 255)", "rgb(153, 102, 255)", "rgb(204, 102, 255)"
 ];
 
 const Canvas = () => {
@@ -71,7 +72,7 @@ const Canvas = () => {
 
         if (selectedNodes.length === 2 && algorithm === 'dijkstra') {
             setTimeout(() => {
-                const graph = applyDijkstra(selectedNodes[0], selectedNodes[1], nodes, edges);
+                const graph = applyDijkstra(selectedNodes[0], selectedNodes[1], nodes, edges, directed);
                 extractPath(graph, selectedNodes[1]);
                 setSelectedNodes([]);
             }, 500)
@@ -88,7 +89,7 @@ const Canvas = () => {
         }
 
         if (selectedNodes.length === 2 && algorithm === 'longest_path') {
-            const graph = applyLongestPath(selectedNodes[0], selectedNodes[1], nodes, edges);
+            const graph = applyLongestPath(selectedNodes[0], selectedNodes[1], nodes, edges, directed);
             extractPath(graph, selectedNodes[1]);
             setSelectedNodes([]);
         }
@@ -190,25 +191,22 @@ const Canvas = () => {
     }
 
     const extractPath = (graph: any, finish: any) => {
+        setPath([]);
         setAnimState({ state: [], id: 0 });
         if (graph.length === 0) return;
 
         let currentLabel = finish.label;
         let newPath: string[] = [];
         let x = 0;
-        let len = 0;
 
         while (true) {
             for (let i = 0; i < graph.length; i++) {
-                if (graph[i].label === currentLabel) {
-                    len++;
+                if (graph[i].label === currentLabel && (graph[i].previous || graph[i].label !== finish)) {
                     newPath = [currentLabel, ...newPath];
                     x = i;
                     break;
                 }
             }
-
-            if (len > 100) return newPath;
 
             if (graph[x].previous)
                 currentLabel = graph[x].previous.label;
@@ -217,7 +215,10 @@ const Canvas = () => {
             }
         }
 
-        // path.reverse();
+        if (newPath.length < 2) {
+            dispatch(showMessage('No path found.'));
+            return;
+        }
 
         for (let i = 0; i < newPath.length; i++) {
             setTimeout(() => {
@@ -261,7 +262,7 @@ const Canvas = () => {
     const edgeOnPath = (node1: NodeType, node2: NodeType) => {
         for (let i = 0; i < path.length; i++) {
             if (node1.label === path[i]) {
-                if ((i > 0 && path[i - 1] === node2.label) || (i < path.length - 1 && path[i + 1] === node2.label)) return true;
+                if ((i > 0 && path[i - 1] === node2.label && !directed) || (i < path.length - 1 && path[i + 1] === node2.label)) return true;
             }
         }
 
@@ -269,7 +270,11 @@ const Canvas = () => {
     }
 
     const getKruskal = () => {
-        const tree = applyKruskal(nodes, edges);
+        setMST([]);
+        const tree = applyKruskal(nodes, edges)!;
+
+        if (tree.length === 0) dispatch(showMessage('A Minimum Spanning Tree does not exist'))
+
         if (!tree) return;
 
         for (let i = 0; i < tree.length; i++) {
@@ -282,7 +287,7 @@ const Canvas = () => {
         }
     }
 
-    const edgeOnKruskal = (edge: string) => {
+    const edgeOnMST = (edge: string) => {
         if (MST?.find(e => e.connectedNodes === edge)) return true;
         return false;
     }
@@ -290,6 +295,8 @@ const Canvas = () => {
     const getPrim = () => {
         setMST([]);
         const tree = applyPrim(nodes[0], nodes, edges);
+
+        if (tree.length === 0) dispatch(showMessage('A Minimum Spanning Tree does not exist'))
 
         if (!tree) return;
 
@@ -357,15 +364,15 @@ const Canvas = () => {
             case 'prim':
                 return 'rgb(118,0,253)'
             case 'kruskal':
-                return '#ff0063'
+                return 'rgb(255, 0, 99)'
             case 'eulerian_path':
-                return 'gold'
+                return 'rgb(255, 217, 0)'
             case 'eulerian_circuit':
                 return 'gold'
             case 'bellman_ford':
-                return '#00ff96'
+                return 'rgb(0, 255, 150)'
             case 'longest_path':
-                return 'red'
+                return 'rgb(255,0, 0)'
             default:
                 return 'lime'
         }
@@ -398,7 +405,7 @@ const Canvas = () => {
                                     return <Edge
                                         from={node}
                                         to={nodes.find(n => n.label === neighbour.label)!}
-                                        color={edgeOnPath(node, neighbour) || edgeOnKruskal(connectedNodes) ? 'rgb(0, 255, 0)' : 'rgb(255, 255, 255)'}
+                                        color={edgeOnPath(node, neighbour) || edgeOnMST(connectedNodes) ? getAlgoColor() : 'rgb(255, 255, 255)'}
                                         connectedNodes={connectedNodes}
                                         key={connectedNodes}
                                         animState={animState.state}

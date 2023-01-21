@@ -25,7 +25,6 @@ export const menuSlice = createSlice({
     reducers: {
         focusEdge: (state, action: PayloadAction<EdgeType>) => {
             state.focusedEdge = action.payload;
-            console.log(action.payload)
             state.showEdgeMenu = true;
         },
         disableEdgeMenu: (state) => {
@@ -39,6 +38,7 @@ export const menuSlice = createSlice({
             state.weighted = action.payload;
         },
         showMessage: (state, action: PayloadAction<string | null>) => {
+            state.message = null;
             if (action.payload === null) state.message = null;
             if (!state.message) state.message = action.payload;
         }

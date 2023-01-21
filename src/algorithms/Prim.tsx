@@ -1,11 +1,13 @@
 import { EdgeType, NodeType } from "../features/graph/graphSlice";
 import { isConnected } from "./DepthFirstSearch";
 
-let tree: EdgeType[] = [];
+let tree: EdgeType[] = []; 
 let treeGraph: NodeType[] = [];
 let visited: NodeType[] = [];
 
 const applyPrim = (startingNode: NodeType, nodes: NodeType[], edges: EdgeType[]) => {
+    if(!isConnected(nodes)) return [];
+
     treeGraph = nodes.map(node => { return { ...node, neighbours: [] } })
     visited = [startingNode];
 
@@ -23,7 +25,6 @@ const applyPrim = (startingNode: NodeType, nodes: NodeType[], edges: EdgeType[])
             }
         }
 
-        console.log(edgeSet, visited)
         edgeSet.sort((a, b) => a.weight - b.weight);
         if (edgeSet.length > 0) addEdge(nodes, edgeSet[0]);
         edgeSet = [];

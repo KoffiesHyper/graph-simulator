@@ -10,6 +10,7 @@ import { FaCodeBranch } from 'react-icons/fa'
 import { FiMove } from 'react-icons/fi'
 import TopBarButton from "./TopBarButton";
 import { checkOrderIsomorphism } from "../../../algorithms/ConnectedComponents";
+import { hasCycle } from "../../../algorithms/DepthFirstSearch";
 
 type ActionsType = {
     [index: string]: () => void
@@ -80,6 +81,11 @@ const TopBar = () => {
 
         if ((algorithm === 'longest_path' || algorithm === 'bellman_ford') && !directed) {
             dispatch(showMessage(`The ${formalize(algorithm)} algorithm only works on directed graphs.`))
+            return;
+        }
+
+        if(algorithm === 'longest_path' && directed && hasCycle(nodes)){
+            dispatch(showMessage(`The ${formalize(algorithm)} algorithm only works on acyclic directed graphs.`))
             return;
         }
 
@@ -164,7 +170,7 @@ const TopBar = () => {
                 {removing ? 'Removing' : 'Remove'}
             </button>
 
-            <button onClick={() => setAlgoExpanded(exp => !exp)} >
+            <button onMouseEnter={() => setAlgoExpanded(exp => !exp)} onMouseLeave={() => setAlgoExpanded(exp => !exp)}>
                 <TopBarButton><FaCodeBranch /></TopBarButton>
                 Algorithms
                 {algoExpanded &&
@@ -182,7 +188,7 @@ const TopBar = () => {
                 }
             </button>
 
-            <button className="last-btn" onClick={() => setActionExpanded(exp => !exp)} >
+            <button className="last-btn" onMouseEnter={() => setActionExpanded(exp => !exp)} onMouseLeave={() => setActionExpanded(exp => !exp)} >
                 <TopBarButton><IoMdSettings /></TopBarButton>
                 Other Actions
                 {actionExpanded &&
