@@ -1,10 +1,10 @@
 .canvas {
     width: 100vw;
-    height: 100vh;
+    height: calc(100vh - 70px);
     background-color: rgb(80, 80, 100);
     cursor: crosshair;
     position: absolute;
-    top: 0;
+    top: 70px;
     left: 0;
     background-size: 28px 28px;
     background-image:

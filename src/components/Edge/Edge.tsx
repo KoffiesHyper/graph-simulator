@@ -140,8 +140,6 @@ const Edge = ({ from, to, color, connectedNodes, animState, path }: EdgePropsTyp
             toX = nodes.find(node => node.label === edge.to?.label)!.x!;
         }
 
-
-
         if (fromX < toX) return true;
         return false;
     }

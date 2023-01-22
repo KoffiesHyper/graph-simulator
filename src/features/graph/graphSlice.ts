@@ -70,7 +70,7 @@ export const nodesSlice = createSlice({
             }
 
 
-            state.nodes.push({ ...newNode, label: state.nextNodeLabel });
+            state.nodes.push({ ...newNode, label: state.nextNodeLabel, y: newNode.y! -70 });
             state.nextNodeLabel = String.fromCharCode(state.nextNodeLabel.charCodeAt(0) + 1);
         },
         toggleAddNode: (state, action: PayloadAction<boolean>) => {
@@ -204,7 +204,7 @@ export const nodesSlice = createSlice({
             const movingNode = state.nodes.find(node => node.label === state.movingNode);
             if (movingNode) {
                 movingNode.x = action.payload[0];
-                movingNode.y = action.payload[1];
+                movingNode.y = action.payload[1] - 70;
             }
         },
         clearCanvas: (state) => {

@@ -82,7 +82,9 @@ export const hasCycle = (graph: NodeType[]) => {
     cycle = false;
     DPSGraph = graph.map((e) => { return { ...e, visited: false } as DPS_Node });
     
-    CycleSeekingDFS(DPSGraph[0], []);
+    for (let i = 0; i < DPSGraph.length; i++) {
+        CycleSeekingDFS(DPSGraph[i], []);
+    }
 
     return cycle;
 }
