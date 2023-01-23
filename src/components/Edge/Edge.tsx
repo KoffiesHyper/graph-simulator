@@ -61,8 +61,8 @@ const Edge = ({ from, to, color, connectedNodes, animState, path }: EdgePropsTyp
         let dist = 15;
 
         const parralelEdge = edges.find(e => e.connectedNodes === connectedNodes && from.label === e.from?.label);
-        if (parralelEdge?.from?.label! < parralelEdge?.to?.label!) return (dir === 'vert') ? dist * Math.cos(angle) : dist * Math.cos(Math.PI / 2 - angle)
-        else if (parralelEdge?.from?.label! > parralelEdge?.to?.label!) return (dir === 'vert') ? -dist * Math.cos(angle) : -dist * Math.cos(Math.PI / 2 - angle)
+        if (parralelEdge?.from?.label! < parralelEdge?.to?.label!) return (dir === 'vert') ? dist * Math.cos(-angle) : dist * Math.sin(-angle)
+        else if (parralelEdge?.from?.label! > parralelEdge?.to?.label!) return (dir === 'vert') ? -dist * Math.cos(-angle) : -dist * Math.sin(-angle)
 
         return 0;
     }
